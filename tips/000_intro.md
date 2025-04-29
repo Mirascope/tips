@@ -23,6 +23,6 @@ Here's what you can expect:
 
 Our hope is that, taken together, these tips will provide a practical roadmap, allowing you to incrementally adopt better practices and avoid common pitfalls. Whether you're integrating your first LLM call or scaling a complex agentic system, we think you'll find value here.
 
-We're excited to share what we've learned (and are still learning!). Look out for Tip #1 shortly.
+We're excited to share what we've learned (and are still learning!).
 
 Let's build effective AI, together.
