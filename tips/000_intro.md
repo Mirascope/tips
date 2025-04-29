@@ -1,4 +1,4 @@
-**Introducing "Effective AI": Practical Tips for Building Better AI Systems**
+## Introducing "Effective AI": Practical Tips for Building Better AI Systems
 
 There's an incredible amount of energy pouring into building AI-powered systems right now, and a lot of talented people are joining the effort, many coming from more traditional software engineering backgrounds. That's fantastic news! Your experience building robust, scalable, and maintainable software is invaluable. Honestly, strong engineering fundamentals probably get you 80% of the way there when building many AI applications.
 
