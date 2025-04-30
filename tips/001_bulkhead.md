@@ -21,7 +21,6 @@ def generate_response(query: str) -> str:
   # More business logic potentially using the raw text
   # ... process response_text ...
   return processed_response
-
 ```
 
 **Why this is problematic:**
@@ -54,14 +53,13 @@ CONTEXT:
 USER QUERY: {query}
 """ # Keep prompts separate
 
-class GenResponse(BaseModel): # Define desired structure
-  response: str
-  # Add Pydantic validators here for output checking!
+def search(query: str) -> list[str]:
+  return ['doc1', 'doc2', 'doc3']
 
 # The "Bulkhead" Function - dedicated to the AI interaction
-@llm.call(provider='openai', model='gpt-4o-mini', response_model=GenResponse) # Handles call, parsing, retries (via decorators)
+@llm.call(provider='openai', model='gpt-4o-mini') # Handles call, parsing, retries (via decorators)
 @prompt_template(PROMPT_TEMPLATE)
-def generate_response_llm(query: str, docs: list[Document]): ... # Definition focuses purely on inputs/outputs
+def generate_response_llm(query: str, docs: list[str]): ... # Definition focuses purely on inputs/outputs
 
 # Main business logic - cleaner and decoupled
 def generate_response(query: str) -> str:
@@ -69,11 +67,10 @@ def generate_response(query: str) -> str:
   docs = search(query)
 
   # Call the isolated AI function (the bulkhead)
-  structured_output = generate_response_llm(query, docs) # Handles retries, parsing, validation internally!
+  resp = generate_response_llm(query, docs) # Handles retries, parsing, validation internally!
 
   # Business logic using reliable, structured data
-  return structured_output.response # Access the validated field
-
+  return resp.content
 ```
 
 **Why this "Bulkhead" is better**
