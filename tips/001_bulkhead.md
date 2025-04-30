@@ -36,20 +36,30 @@ def generate_response(query: str) -> str:
 Isolate the AI call behind a dedicated function or class. This acts as a "bulkhead," containing the AI's specific needs and protecting the rest of your application. [Bulkheads are named after sectioned partitions of a ship's hull](https://learn.microsoft.com/en-us/azure/architecture/patterns/bulkhead), which prevents damage from one section causing water
 leakage to another.
 
-Here's the *principle* demonstrated using `mirascope` (but you can implement this pattern yourself!):
+Here's the *principle* demonstrated using [`mirascope`](https://mirascope.com/WELCOME/) (but you can implement this pattern yourself with other libraries/frameworks or even without one):
 
 Python
 
 ```python
 # <<< AFTER: Isolated AI Call >>>
-PROMPT_TEMPLATE = "..." # Keep prompts separate
+PROMPT_TEMPLATE = """
+SYSTEM: You are a helpful assistant that generates concise, accurate responses to user queries.
+Use only the provided document information. If you don't know, say so.
+
+CONTEXT:
+---
+{docs}
+---
+
+USER QUERY: {query}
+""" # Keep prompts separate
 
 class GenResponse(BaseModel): # Define desired structure
   response: str
   # Add Pydantic validators here for output checking!
 
 # The "Bulkhead" Function - dedicated to the AI interaction
-@llm.call(provider=..., model=..., response_model=GenResponse) # Handles call, parsing, retries (via decorators)
+@llm.call(provider='openai', model='gpt-4o-mini', response_model=GenResponse) # Handles call, parsing, retries (via decorators)
 @prompt_template(PROMPT_TEMPLATE)
 def generate_response_llm(query: str, docs: list[Document]): ... # Definition focuses purely on inputs/outputs
 
