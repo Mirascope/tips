@@ -11,7 +11,7 @@ Following up on Tip #1 (Building Bulkheads), let's talk about the crucial next s
 
 **Building on Tip #1: Easy Instrumentation via Bulkheads**
 
-Remember the "Bulkhead" function (`generate_response_llm`) we created in Tip #1 to isolate the AI call? That single point of interaction is the *perfect* place to add instrumentation! Instead of scattering logging code everywhere, you can often add it cleanly with a decorator. For example, using a tracing library like `lilypad`:
+Remember the "Bulkhead" function (`generate_response_llm`) we created in Tip #1 to isolate the AI call? That single point of interaction is the *perfect* place to add instrumentation! Instead of scattering logging code everywhere, you can often add it cleanly with a decorator. For example, using a tracing library like [`lilypad`](https://lilypad.so/):
 
 ```python
 # <<< INSTRUMENTED: Building on our Bulkhead example >>>

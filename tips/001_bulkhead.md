@@ -36,7 +36,7 @@ def generate_response(query: str) -> str:
 Isolate the AI call behind a dedicated function or class. This acts as a "bulkhead," containing the AI's specific needs and protecting the rest of your application. [Bulkheads are named after sectioned partitions of a ship's hull](https://learn.microsoft.com/en-us/azure/architecture/patterns/bulkhead), which prevents damage from one section causing water
 leakage to another.
 
-Here's the *principle* demonstrated using `mirascope` (but you can implement this pattern yourself!):
+Here's the *principle* demonstrated using [`mirascope`](https://mirascope.com/WELCOME/) (but you can implement this pattern yourself with other libraries/frameworks or even without one):
 
 Python
 
