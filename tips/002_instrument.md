@@ -14,18 +14,39 @@ Following up on Tip #1 (Building Bulkheads), let's talk about the crucial next s
 Remember the "Bulkhead" function (`generate_response_llm`) we created in Tip #1 to isolate the AI call? That single point of interaction is the *perfect* place to add instrumentation! Instead of scattering logging code everywhere, you can often add it cleanly with a decorator. For example, using a tracing library like `lilypad`:
 
 ```python
-# Just add the tracing decorator!
+# <<< INSTRUMENTED: Building on our Bulkhead example >>>
+PROMPT_TEMPLATE = """
+SYSTEM: You are a helpful assistant that generates concise, accurate responses to user queries.
+Use only the provided document information. If you don't know, say so.
+
+CONTEXT:
+---
+{docs}
+---
+
+USER QUERY: {query}
+""" # Same template from Tip #1
+
+class GenResponse(BaseModel): # Same structure from Tip #1
+  response: str
+  # Add Pydantic validators here for output checking!
+
+# The "Bulkhead" Function - now with added instrumentation
 @lilypad.trace() # <--- Added Instrumentation!
-@llm.call(provider=..., model=..., response_model=GenResponse)
+@llm.call(provider='openai', model='gpt-4o-mini', response_model=GenResponse)
 @prompt_template(PROMPT_TEMPLATE)
 def generate_response_llm(query: str, docs: list[Document]): ...
 
-# --- rest of your code remains unchanged ---
+# Main business logic - unchanged from Tip #1
 def generate_response(query: str) -> str:
+  # Business logic
   docs = search(query)
-  structured_output = generate_response_llm(query, docs)
+  
+  # Call the isolated, instrumented AI function
+  structured_output = generate_response_llm(query, docs) # Now with tracing!
+  
+  # Business logic using reliable, structured data
   return structured_output.response
-
 ```
 
 With this simple addition, you can start getting rich, visual traces of your AI calls (imagine a screenshot here of a trace UI!), showing the inputs, outputs, latency, and relationships between calls.

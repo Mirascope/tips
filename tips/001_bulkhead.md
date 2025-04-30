@@ -42,14 +42,24 @@ Python
 
 ```python
 # <<< AFTER: Isolated AI Call >>>
-PROMPT_TEMPLATE = "..." # Keep prompts separate
+PROMPT_TEMPLATE = """
+SYSTEM: You are a helpful assistant that generates concise, accurate responses to user queries.
+Use only the provided document information. If you don't know, say so.
+
+CONTEXT:
+---
+{docs}
+---
+
+USER QUERY: {query}
+""" # Keep prompts separate
 
 class GenResponse(BaseModel): # Define desired structure
   response: str
   # Add Pydantic validators here for output checking!
 
 # The "Bulkhead" Function - dedicated to the AI interaction
-@llm.call(provider=..., model=..., response_model=GenResponse) # Handles call, parsing, retries (via decorators)
+@llm.call(provider='openai', model='gpt-4o-mini', response_model=GenResponse) # Handles call, parsing, retries (via decorators)
 @prompt_template(PROMPT_TEMPLATE)
 def generate_response_llm(query: str, docs: list[Document]): ... # Definition focuses purely on inputs/outputs
 
