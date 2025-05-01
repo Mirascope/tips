@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "lilypad-sdk>=0.1.0a35",
     "mirascope[anthropic,openai]>=1.22.4",
-    "pydantic>=2.11.4",
+    "pydantic[email,email-validator]>=2.11.4",
 ]
