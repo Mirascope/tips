@@ -40,12 +40,12 @@ PROMPT_TEMPLATE = """
 SYSTEM: You are a helpful assistant that generates concise, accurate responses to user queries.
 Use only the provided document information. If you don't know, say so.
 
-CONTEXT:
+## CONTEXT:
 ---
 {docs}
 ---
 
-USER QUERY: {query}
+USER: {query}
 """ # Keep prompts separate
 
 # The "Bulkhead" Function - dedicated to the AI interaction
