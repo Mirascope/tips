@@ -1,15 +1,15 @@
-## Effective AI Tip #1: Build Bulkheads Around Your AI Calls!
+## Effective AI Engineering: Build Bulkheads Around Your AI Calls
 
-AI components (especially LLMs) have unique failure modes and operational needs (retries, specific logging, structured output handling) compared to typical application code. Mixing them directly creates brittle systems that are hard to manage.
+**Is your AI service making your entire codebase fragile?** Random AI errors shouldn't crash your application or force you to litter retry logic throughout your code.
 
-**The Common Anti-Pattern:**
+AI components (especially LLMs) have unique failure modes and operational requirements unlike typical application dependencies. Without proper isolation, they create brittle systems where AI-specific needs (retries, logging, parsing) contaminate your business logic, making the whole system harder to maintain and evolve.
 
-We often see code like this:
+### The Problem
 
-Python
+Many developers integrate AI directly into their business logic, mixing concerns that should remain separate:
 
 ```python
-# <<< BEFORE: Direct Call within Business Logic >>>
+# BEFORE: Direct Call within Business Logic
 def generate_response(query: str) -> str:
   # Business logic: preparing data
   docs = search(query)
@@ -23,24 +23,19 @@ def generate_response(query: str) -> str:
   return processed_response
 ```
 
-**Why this is problematic:**
+**Why this approach falls short:**
 
-- **Reliability:** Where do you add retries just for `ai_service.completion` without cluttering `generate_response`? How do you handle specific AI errors gracefully?
-- **Logging/Observability:** Need to log the exact prompt, raw response, latency, token counts? You have to manually add that logging *here*, and potentially everywhere else `ai_service` is called.
-- **Structured Output:** What if you need JSON, not just a string? You parse the `response_text` *after* the call, mixing parsing logic with core application flow. Validation becomes an afterthought.
-- **Maintenance:** Changing the underlying AI model, adding Chain-of-Thought prompting, or needing different parsing logic requires modifying `generate_response` directly, increasing the risk of breaking unrelated business logic.
+- **Reliability Issues:** Adding retries just for `ai_service.completion` clutters `generate_response`. AI-specific error handling becomes difficult to isolate.
+- **Poor Observability:** Need to log prompts, responses, latency, and token counts? You'll add this logic everywhere the AI service is called, creating duplication and inconsistency.
+- **Unstructured Outputs:** Parsing raw text responses and validating their structure happens after the call, mixing validation logic with core application flow.
+- **Maintenance Challenges:** Changing the underlying AI model, modifying prompting techniques, or updating parsing logic requires modifying business functions directly, increasing the risk of breaking unrelated code.
 
-**The Better Way: The Bulkhead Pattern**
+### The Solution: The Bulkhead Pattern
 
-Isolate the AI call behind a dedicated function or class. This acts as a "bulkhead," containing the AI's specific needs and protecting the rest of your application. [Bulkheads are named after sectioned partitions of a ship's hull](https://learn.microsoft.com/en-us/azure/architecture/patterns/bulkhead), which prevents damage from one section causing water
-leakage to another.
-
-Here's the *principle* demonstrated using [`mirascope`](https://mirascope.com/WELCOME/) (but you can implement this pattern yourself with other libraries/frameworks or even without one):
-
-Python
+A better approach is to isolate AI calls behind dedicated functions or classes. This "bulkhead" contains the AI's specific needs and protects the rest of your application from its unique behaviors. The pattern is named after ship hull partitions that prevent water damage in one section from spreading to others.
 
 ```python
-# <<< AFTER: Isolated AI Call >>>
+# AFTER: Isolated AI Call with Clear Boundaries
 PROMPT_TEMPLATE = """
 SYSTEM: You are a helpful assistant that generates concise, accurate responses to user queries.
 Use only the provided document information. If you don't know, say so.
@@ -53,9 +48,6 @@ CONTEXT:
 USER QUERY: {query}
 """ # Keep prompts separate
 
-def search(query: str) -> list[str]:
-  return ['doc1', 'doc2', 'doc3']
-
 # The "Bulkhead" Function - dedicated to the AI interaction
 @llm.call(provider='openai', model='gpt-4o-mini') # Handles call, parsing, retries (via decorators)
 @prompt_template(PROMPT_TEMPLATE)
@@ -67,19 +59,22 @@ def generate_response(query: str) -> str:
   docs = search(query)
 
   # Call the isolated AI function (the bulkhead)
-  resp = generate_response_llm(query, docs) # Handles retries, parsing, validation internally!
-
+  response = generate_response_llm(query, docs) # Handles retries, parsing, validation internally!
+  
   # Business logic using reliable, structured data
-  return resp.content
+  return response.content
 ```
 
-**Why this "Bulkhead" is better**
+**Why this approach works better:**
 
-- **Targeted Reliability:** Need retries? Add a retry decorator (`@retry(...)`) to `generate_response_llm` – it doesn't touch `generate_response`.
-- **Clean Structured Output:** Define the `GenResponse` model. The framework (or your custom wrapper) handles parsing and validation *within the bulkhead*. `generate_response` receives clean, validated data.
-- **Centralized Control:** Want to add Chain-of-Thought? Update the `PROMPT_TEMPLATE` and maybe `GenResponse`. Need better parsing? Add a parsing decorator to `generate_response_llm`. Changes are localized.
-- **Simplified Observability:** Instrument `generate_response_llm` once (e.g., using tracing tools like `lilypad` or manual logging) to capture all AI interaction details (prompt, raw/parsed response, latency, cost) consistently.
+- **Targeted Reliability:** Need retries? Add a retry decorator (`@retry(...)`) to `generate_response_llm` – it won't affect your business logic. AI-specific errors are handled in one place.
+- **Consistent Observability:** Instrument `generate_response_llm` once to capture all AI interaction details (prompt, response, latency, cost) consistently across your application.
+- **Clean Structured Output:** Define a response model with validation. The bulkhead handles parsing and validation internally, so business logic receives clean, validated data every time.
+- **Simplified Maintenance:** Need to update the prompt? Change the model? Add Chain-of-Thought? All these changes happen within the bulkhead, isolated from your business logic.
 
-**The Takeaway**
+### The Takeaway
 
-Don't let AI calls bleed into your core logic. **Wrap them in dedicated functions/classes (Bulkheads)** to handle their unique reliability, input/output, and observability needs. This isolation makes your system more robust, maintainable, and easier to evolve.
+Don't let AI calls bleed into your core business logic. When you isolate AI interactions using the Bulkhead pattern, you gain better reliability, observability, and maintainability. This targeted isolation makes your AI integrations more robust against failures and easier to evolve as AI capabilities change.
+
+---
+*Part of the "Effective AI Engineering" series - practical tips for building better applications with AI components.*
