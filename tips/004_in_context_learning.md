@@ -1,56 +1,56 @@
-## Tip #4: Show, Don't Just Tell - Use In-Context Learning
+## Effective AI Engineering: Show, Don't Just Tell - Use In-Context Learning
 
+**Are you getting unpredictable or poorly formatted LLM outputs?** Clear instructions alone often aren't enough to get consistent, high-quality responses from language models.
 
-While clear instructions and structured outputs (Tip #3) are vital, sometimes you need to explicitly *show* the LLM what a good answer looks like, especially for tasks requiring specific formats, styles, or complex reasoning. This technique is called **In-Context Learning (ICL)** or **Few-Shot Prompting**.
+Language models can be frustratingly inconsistent when given abstract instructions. Even with detailed requirements, they may still produce responses that vary in structure, formatting, or reasoning quality. This inconsistency creates a maintenance burden and erodes trust in your AI-powered features.
 
-**The Core Idea: Provide Examples in the Prompt**
+### The Problem
 
-Instead of just relying on instructions (zero-shot), you include examples of input/output pairs directly within the prompt itself. The LLM uses these "shots" to better understand the desired pattern for the *actual* query you provide in the same prompt.
-
-**Static vs. Dynamic Examples:**
-
-* **Static Few-Shot:** You hardcode a few fixed examples directly into your prompt template. This is simple and great for reinforcing consistent formats or common cases.
-* **Dynamic Few-Shot:** You select relevant examples on-the-fly based on the current user query. This is more powerful as it provides tailored guidance.
-
-**How Dynamic Examples Leverage Your Workflow:**
-
-Dynamic ICL works best when you have a pool of known good interactions. Where do these come from? Your **instrumented and evaluated production data!**
-
-1.  **Instrumentation (Tip #2):** Your Lilypad traces log the inputs (`query`) and outputs (`final_answer`) of your AI calls.
-2.  **Evaluation (Upcoming Tips):** You annotate these traces in Lilypad (e.g., marking them 'pass' or 'fail', adding qualitative feedback).
-3.  **Retrieval (The Key Step):** Before calling the LLM for a new query, you'd query your Lilypad annotations:
-    * Find past interactions marked 'pass'.
-    * Use a similarity technique (like BM25 keyword matching or vector embedding similarity) to find the past queries most similar to the current `user_query`.
-    * Retrieve the corresponding successful `answer` for those similar queries.
-4.  **Injection:** Pass these dynamically retrieved examples into your Mirascope prompt.
-
-**Example (Using Mirascope to Inject Examples into the Prompt):**
-
-Let's focus on how Mirascope facilitates including these examples (static or dynamic) in the prompt structure. Assume you have already retrieved the relevant examples (e.g., via the Lilypad/similarity process described above) into a list called `selected_examples`.
+Many developers rely solely on instructional prompts, hoping the LLM will understand their requirements:
 
 ```python
-import os
+# BEFORE: Instruction-Only Prompting
+def generate_answer(query: str):
+    prompt = f"""
+    SYSTEM: You are a helpful assistant. Answer the user's question with accurate information.
+    Provide a structured, detailed explanation with relevant examples.
+    
+    USER: {query}
+    """
+    
+    # No examples provided - just hoping the LLM understands the instructions
+    response = llm_service.completion(prompt)
+    return response
+```
+
+**Why this approach falls short:**
+
+- **Inconsistent Formatting:** Without examples, the LLM's interpretation of "structured" varies widely, making parsing difficult.
+- **Quality Variance:** Abstract instructions like "detailed explanation" yield unpredictable levels of detail and reasoning.
+- **Poor Handling of Edge Cases:** The LLM lacks concrete guidance for unusual or complex queries.
+- **Format Drift Over Time:** Different model versions may interpret the same instructions differently.
+
+### The Solution: In-Context Learning (Few-Shot Prompting)
+
+A better approach is to show the LLM what you want by including examples directly in your prompts. This technique, called In-Context Learning (ICL), provides concrete demonstrations that the model can imitate.
+
+```python
+# AFTER: Few-Shot Prompting with Examples
 from mirascope import llm, prompt_template
 from pydantic import BaseModel, Field
-from typing import List
-import bm25s
 
-# Define structure for an example pair
+# Define structure for examples
 class Example(BaseModel):
     query: str
-    answer: str # Could also be a Pydantic model for structured I/O examples
+    answer: str
 
-    @classmethod
-    def from_trace(cls, tr: dict) -> 'Example':
-        return cls(query=tr['arg_values']['query'], answer=tr['output'])
-
-# Define the expected final response structure
+# Define expected response structure
 class Response(BaseModel):
     final_answer: str = Field(description="The final answer generated by the assistant.")
 
-# Define the prompt template with a placeholder for examples
-FEW_SHOT_PROMPT_TEMPLATE = """
-SYSTEM: You are a helpful assistant. Follow the format of the examples provided if any.
+# Define prompt template with examples section
+FEW_SHOT_PROMPT = """
+SYSTEM: You are a helpful assistant. Follow the format of the examples provided.
 
 --- START EXAMPLES ---
 {examples_block}
@@ -59,59 +59,74 @@ SYSTEM: You are a helpful assistant. Follow the format of the examples provided 
 USER: {query}
 """
 
-@lilypad.trace(versioning='automatic')
 @llm.call("openai", model="gpt-4o-mini", response_model=Response)
-@prompt_template(FEW_SHOT_PROMPT_TEMPLATE)
-def generate_response_with_examples(query: str, examples: List[Example]):
-    """
-    Generates a response using Mirascope, incorporating provided examples.
-    The 'examples' list would be populated by fetching/ranking data from Lilypad annotations.
-    """
-    # Clearly format each example
-    examples_str = "\n\n".join(
+@prompt_template(FEW_SHOT_PROMPT)
+def generate_answer_with_examples(query: str, examples: list[Example]):
+    """Generates a response using provided examples for guidance."""
+    # Format the examples for insertion into the prompt
+    examples_block = "\n\n".join(
         f"EXAMPLE:\nUSER: {ex.query}\nASSISTANT: {ex.answer}"
         for ex in examples
     )
-
-    # Return the formatted block to inject into the prompt template
-    # Mirascope automatically injects 'query' from the function arguments.
+    
     return {"computed_fields": {"examples_block": examples_block}}
 
+# Use the function with selected examples
+examples = [
+    Example(query="How do solar panels work?", 
+            answer="Solar panels work through the photovoltaic effect. When sunlight hits the semiconductor materials in the panel, it knocks electrons loose, generating electricity. This direct current (DC) is then converted to alternating current (AC) for home use."),
+    # Add more examples...
+]
 
-def _retrieve_examples(examples: list[Example], k: int) -> list[(Example, float)]:
-    corpus_tokens = bm25s.tokenize([x.query for x in examples])
+response = generate_answer_with_examples(
+    query="How do wind turbines generate electricity?",
+    examples=examples
+)
+```
+
+**Why this approach works better:**
+
+- **Consistent Formatting:** Examples demonstrate the exact response structure you want, leading to more predictable outputs.
+- **Improved Reasoning:** Examples show the level of detail and reasoning style expected, producing higher quality answers.
+- **Better Edge Case Handling:** Examples can demonstrate how to address unusual situations or special cases.
+- **Adaptable Guidance:** You can provide static examples for consistency or dynamically select relevant examples based on the query.
+
+### Advanced Implementation: Dynamic Few-Shot Selection
+
+For even better results, use your instrumented production data (Tip #2) to dynamically select the most relevant examples:
+
+```python
+# Building on previous example
+import os
+from lilypad import Client
+import bm25s
+
+def retrieve_examples(query: str, k: int = 3) -> list[Example]:
+    # Connect to your instrumentation system
+    client = Client()
+    
+    # Get successfully evaluated past interactions
+    traces = client.projects.traces.list(project_uuid=os.environ.get("PROJECT_ID"))
+    success_examples = [
+        Example(query=tr['arg_values']['query'], answer=tr['output'])
+        for tr in traces if tr.get('annotation', {}).get('label') == 'pass'
+    ]
+    
+    # Use similarity search to find relevant examples
+    corpus_tokens = bm25s.tokenize([ex.query for ex in success_examples])
     retriever = bm25s.BM25()
     retriever.index(corpus_tokens)
     query_tokens = bm25s.tokenize(query)
-    return retriever.retrieve(query_tokens, k=k)[0]
-
-
-def get_examples(query: str, k: int = 3) -> list[Example]:
-    client = lilypad.Client()
-    annotations = client.projects.annotations.list(project_uuid=os.environ.get())
-    examples = [Example.from_trace(x) for x in annotations if x['label'] == 'pass']
-    return _retrieve_examples(examples, k)
-
-
-user_query = "How do I update my payment method?"
-examples = get_examples(query)
-
-response_object: Response = generate_response_with_examples(
-    query=user_query,
-    examples=examples
-)
-
-# Access the structured response
-print("Final LLM Answer:", response_object.final_answer)
+    
+    # Get top-k most similar examples based on BM25
+    # See later tips on retrieval and ranking for more thoughts on how to select examples!
+    results = retriever.retrieve(query_tokens, k=k)[0]
+    return [success_examples[idx] for idx, _ in results]
 ```
 
-**Why Use In-Context Learning?**
+### The Takeaway
 
-* **Improved Accuracy:** Helps the LLM better understand complex instructions or nuances.
-* **Better Format Adherence:** Excellent for teaching the LLM to output responses in a specific structure (like JSON, markdown, or a custom format).
-* **Style & Tone Matching:** Guides the LLM to adopt a desired writing style or tone.
-* **Leverages Past Success:** Dynamic ICL uses your annotated production data (via Lilypad) to continuously provide relevant guidance, improving performance over time.
+Don't just tell your LLM what to do – show it with examples. In-Context Learning produces more consistent, higher-quality responses by demonstrating exactly what good outputs look like. This approach leads to more reliable AI systems that deliver predictable results and require less exception handling.
 
-**The Takeaway:**
-
-Don't just rely on instructions. **Show the LLM what you want by including examples (few-shot prompting) directly in your prompts.** Start with static examples for consistency, and explore dynamic examples retrieved from your Lilypad annotations for more tailored and adaptive guidance. Use Mirascope to easily format and manage these examples within your LLM calls.
+---
+*Part of the "Effective AI Engineering" series - practical tips for building better applications with AI components.*
