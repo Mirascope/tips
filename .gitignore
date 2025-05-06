@@ -178,3 +178,5 @@ cython_debug/
 .pypirc
 # SpecStory explanation file
 .specstory/.what-is-this.md
+
+**/.claude/settings.local.json

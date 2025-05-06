@@ -1,4 +1,4 @@
-## Effective AI Engineering: [Tip Title]
+## Effective AI Engineering #[Tip Number]: [Tip Title]
 
 **Are you struggling with [specific problem]?** [One sentence description of pain point that resonates with engineers]
 
