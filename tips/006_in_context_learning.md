@@ -99,12 +99,12 @@ For even better results, use your instrumented, annotated production data (Tips 
 ```python
 # Building on previous example
 import os
-from lilypad import Client
+from lilypad import Lilypad
 import bm25s
 
 def retrieve_examples(query: str, k: int = 3) -> list[Example]:
     # Connect to your instrumentation system
-    client = Client()
+    client = Lilypad()
     
     # Get successfully evaluated past interactions
     traces = client.projects.traces.list(project_uuid=os.environ.get("PROJECT_ID"))
