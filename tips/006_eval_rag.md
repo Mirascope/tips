@@ -1,4 +1,4 @@
-## Effective AI Engineering #7: Isolate & Evaluate Your RAG Retriever
+## Effective AI Engineering #6: Isolate & Evaluate Your RAG Retriever
 
 **Are your RAG responses inaccurate despite a strong LLM?** When your retrieval system fails to find the right documents, even the most powerful language model can't generate correct answers.
 
