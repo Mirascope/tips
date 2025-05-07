@@ -1,4 +1,4 @@
-## Effective AI Engineering #6: Show, Don't Just Tell - Use In-Context Learning
+## Effective AI Engineering #7: Show, Don't Just Tell - Use In-Context Learning
 
 **Are you getting unpredictable or poorly formatted LLM outputs?** Clear instructions alone often aren't enough to get consistent, high-quality responses from language models.
 
