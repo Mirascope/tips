@@ -15,7 +15,7 @@ class Response(BaseModel):
 
 # Define prompt template with examples section
 PROMPT = """
-SYSTEM: You are a helpful assistant. Follow the format of the examples provided.
+SYSTEM: You are a helpful assistant. Respond to the user's question with a short greeting and followed by a concise answer to the question.
 
 USER: {query}
 """
@@ -55,7 +55,7 @@ class Response(BaseModel):
 
 # Define prompt template with examples section
 FEW_SHOT_PROMPT = """
-SYSTEM: You are a helpful assistant. Follow the format of the examples provided.
+SYSTEM: You are a helpful assistant. Respond to the user's question with a short greeting and followed by a concise answer to the question. Follow the format of the examples provided.
 
 <examples>
 {examples_block}
@@ -75,8 +75,8 @@ def generate_answer_with_examples(query: str, examples: list[Example]):
 # Use the function with selected examples
 examples = [
     Example(query="How do solar panels work?", 
-            answer="Solar panels work through the photovoltaic effect. When sunlight hits the semiconductor materials in the panel, it knocks electrons loose, generating electricity. This direct current (DC) is then converted to alternating current (AC) for home use."),
-    # Add more examples...
+            answer="Great question! When sunlight hits the semiconductor materials in a solar panel, it knocks electrons loose, generating electricity."),
+    # Other examples...
 ]
 
 response = generate_answer_with_examples(
@@ -110,10 +110,10 @@ def retrieve_examples(query: str, k: int = 3) -> list[Example]:
     traces = client.projects.traces.list(project_uuid=os.environ.get("PROJECT_ID"))
     success_examples = [
         Example(query=tr['arg_values']['query'], answer=tr['output'])
-        for tr in traces if tr.get('annotation', {}).get('label') == 'pass'
+        for tr in traces if tr['annotation']['label'] == 'pass'
     ]
     
-    # Use similarity search to find relevant examples
+    # Use bm25 search to find relevant examples
     corpus_tokens = bm25s.tokenize([ex.query for ex in success_examples])
     retriever = bm25s.BM25()
     retriever.index(corpus_tokens)
