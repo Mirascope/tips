@@ -26,7 +26,7 @@ def compute_rag_metrics():
     rag_traces = [t for t in traces if t.get('display_name') == 'rag_pipeline']
     
     # Count passes and fails from manual annotations
-    labels = [t.get('annotations', {}).get('label') for t in rag_traces if 'annotations' in t]
+    labels = [t['annotations']['label'] for t in rag_traces if 'annotations' in t]
     passes = labels.count('pass')
     fails = labels.count('fail')
     total = passes + fails
@@ -75,15 +75,13 @@ def compute_component_metrics():
     rag_traces = [t for t in traces if t.get('display_name') == 'rag_pipeline']
     
     # Count retrieval passes and fails
-    retrieval_labels = [t.get('annotations', {}).get('label') for t in retrieval_traces 
-                        if 'annotations' in t]
+    retrieval_labels = [t['annotations']['label'] for t in retrieval_traces if 'annotations' in t]
     retrieval_passes = retrieval_labels.count('pass')
     retrieval_fails = retrieval_labels.count('fail')
     retrieval_total = retrieval_passes + retrieval_fails
     
     # Count RAG pipeline passes and fails
-    rag_labels = [t.get('annotations', {}).get('label') for t in rag_traces 
-                  if 'annotations' in t]
+    rag_labels = [t['annotations']['label']  for t in rag_traces if 'annotations' in t]
     rag_passes = rag_labels.count('pass')
     rag_fails = rag_labels.count('fail')
     rag_total = rag_passes + rag_fails
@@ -96,50 +94,25 @@ def compute_component_metrics():
     print(f"Retrieval Success Rate: {retrieval_success:.2f}")
     print(f"RAG Pipeline Success Rate: {rag_success:.2f}")
     
+    # Count the four possible cases: retrieval label, rag label => count
+    case_counts: dict[(bool, bool), int] = defaultdict(int)
+
     # Match traces by query to analyze component relationships
     # Get traces with both retrieval and end-to-end annotations
-    matched_cases = []
-    for r_trace in retrieval_traces:
-        if 'annotations' not in r_trace:
-            continue
-            
-        query = r_trace.get('arg_values', {}).get('query', '')
-        r_label = r_trace.get('annotations', {}).get('label')
-        
-        # Find corresponding RAG trace for this query
-        for rag_trace in rag_traces:
-            if 'annotations' not in rag_trace:
-                continue
-                
-            if rag_trace.get('arg_values', {}).get('query', '') == query:
-                rag_label = rag_trace.get('annotations', {}).get('label')
-                matched_cases.append({
-                    'query': query,
-                    'retrieval': r_label,
-                    'rag': rag_label
-                })
-                break
-    
-    # Count the four possible cases
-    cases = {
-        'retrieval_pass_rag_pass': 0,
-        'retrieval_pass_rag_fail': 0,
-        'retrieval_fail_rag_pass': 0,
-        'retrieval_fail_rag_fail': 0
-    }
-    
-    for case in matched_cases:
-        key = f"retrieval_{case['retrieval']}_rag_{case['rag']}"
-        if key in cases:
-            cases[key] += 1
+    retrieval_traces_by_query = {t['arg_values']['query']: t for t in retrieval_traces}
+    rag_traces_by_query = {t['arg_values']['query']: t for t in rag_traces}
+    for query, r_trace in retrieval_traces_by_query.items():
+        r_label = r_trace['annotations']['label'] == 'pass'
+        rag_label = rag_traces_by_query[query]['annotations']['label'] == 'pass'
+        case_counts[(r_label, rag_label)] += 1
     
     # Print the diagnostic matrix
-    total_matched = len(matched_cases)
+    total_matched = sum(case_counts.values())
     print("\nDiagnostic Matrix (% of total):")
-    print(f"Retrieval PASS, RAG PASS: {cases['retrieval_pass_rag_pass']/total_matched:.2f}")
-    print(f"Retrieval PASS, RAG FAIL: {cases['retrieval_pass_rag_fail']/total_matched:.2f}") 
-    print(f"Retrieval FAIL, RAG PASS: {cases['retrieval_fail_rag_pass']/total_matched:.2f}")
-    print(f"Retrieval FAIL, RAG FAIL: {cases['retrieval_fail_rag_fail']/total_matched:.2f}")
+    print(f"Retrieval PASS, RAG PASS: {cases[(True, True)]/total_matched:.2f}")
+    print(f"Retrieval PASS, RAG FAIL: {cases[(True, False)]/total_matched:.2f}") 
+    print(f"Retrieval FAIL, RAG PASS: {cases[(False, True)]/total_matched:.2f}")
+    print(f"Retrieval FAIL, RAG FAIL: {cases[(False, False)]/total_matched:.2f}")
     
     # Example output:
     # Retrieval Success Rate: 0.75
@@ -154,7 +127,7 @@ def compute_component_metrics():
     return {
         'retrieval': retrieval_success,
         'rag': rag_success,
-        'diagnostic': cases
+        'diagnostic': case_counts
     }
 ```
 
