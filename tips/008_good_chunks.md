@@ -23,6 +23,17 @@ for doc in documents:
 index_chunks(chunks)
 ```
 
+**Example of chunking failure:**
+
+Consider a user query: "What were food conditions like after World War 2?"
+
+With naive chunking, you might get a chunk containing: "In 1946, food was scarce across Europe. Rationing continued for several years..."
+
+This relevant chunk might not be retrieved because:
+1. The chunk doesn't explicitly mention "World War 2" - only "1946"
+2. The temporal relationship between 1946 and World War 2 is lost
+3. Embedding-based similarity might not recognize this connection
+
 **Why this approach falls short:**
 
 - **Diluted Relevance:** Long chunks contain multiple topics, making it hard for retrievers to match user queries with the specific relevant sections.
@@ -30,54 +41,74 @@ index_chunks(chunks)
 - **Lost Information:** When chunks are too small, the answer to a question might be split across multiple fragments that aren't retrieved together.
 - **Wasted Context Budget:** Large, undifferentiated chunks waste valuable context window space with irrelevant information.
 - **Low Information Chunks:** Naive splitting often produces useless chunks with navigation elements, whitespace, or partial information.
+- **Semantic Gaps:** Without additional context, chunks may fail to match conceptually related queries (like years vs. event names).
 
 ### The Solution: Semantic-Aware Chunking
 
 A better approach is to create cohesive, topic-focused chunks that respect natural document boundaries. This ensures each retrieval unit contains complete, self-contained information.
 
 ```python
-# AFTER: Document-Aware Chunking with Metadata
+# AFTER: Document-Aware Chunking with Metadata for Multiple Documents
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from pydantic import BaseModel, Field
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
+from mirascope import llm, prompt_template
+
+class Document(BaseModel):
+    content: str
+    doc_id: str
+    metadata: Dict[str, Any] = Field(default_factory=dict)
 
 class EnrichedChunk(BaseModel):
     content: str
+    doc_id: str
+    document_summary: Optional[str] = None
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
-def create_semantic_chunks(document: str, doc_id: str) -> List[EnrichedChunk]:
-    # Use document structure to guide splits
+# Generate questions that a chunk would be relevant for answering
+@llm.call(provider="openai", model="gpt-4o-mini")
+@prompt_template("Generate questions that the following text would be relevant to answer:\n{chunk_content}")
+def generate_questions_for_chunk(chunk_content: str): ...
+
+# Generate a summary for the whole document
+@llm.call(provider='openai', model='gpt-4o-mini')
+@prompt_template("Summarize the following document:\n{document}")
+def summarize_document(document: str): ...
+
+def process_documents(documents: List[Document]) -> List[EnrichedChunk]:
+    # Configure the text splitter once
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=500,
         chunk_overlap=50,
         separators=["\n\n", "\n", ". ", ", ", " ", ""],  # Prioritize natural breaks
     )
+
+    summaries = [summarize_document(doc) for doc in documents]
+    return [
+        EnrichedChunk(
+            content=chunk,
+            doc_id=doc.doc_id,
+            document_summary=summary,
+            metadata={
+                "source_id": doc.doc_id,
+                "chunk_index": i,
+                "hypothetical_questions": generate_questions_for_chunk(chunk)
+            }
+        )
+        for doc, summary in zip(documents, summaries)
+        for i, chunk in enumerate(text_splitter.split_text(doc.content))
+]
     
-    raw_chunks = text_splitter.split_text(document)
-    chunks = []
-    
-    for i, text in enumerate(raw_chunks):
-        # Enrich with metadata to improve retrieval
-        metadata = {
-            "source_id": doc_id,
-            "chunk_index": i,
-            # Add semantic metadata to improve matching
-            "hypothetical_questions": generate_questions_for_chunk(text),
-            "summary": summarize_chunk(text),
-            "keywords": extract_keywords(text)
-        }
-        chunks.append(EnrichedChunk(content=text, metadata=metadata))
-    
-    return chunks
 ```
 
 **Why this approach works better:**
 
 - **Improved Relevance:** Chunks align with semantic boundaries, preserving logical units of information that better match user queries.
 - **Context Preservation:** Natural splitting respects document structure, keeping related information together.
-- **Enhanced Retrieval:** Metadata like questions, summaries, and keywords bridges the vocabulary gap between queries and documents.
-- **Context Efficiency:** Right-sized chunks use context window space more efficiently, allowing more relevant information to be included.
-- **Better RAG Performance:** Semantic chunking directly improves answer quality by ensuring retrievers can find complete, focused information.
+- **Enhanced Retrieval:** Metadata like document summaries and hypothetical questions bridges the vocabulary gap between queries and documents.
+- **Context Efficiency:** Including document-level summaries in each chunk provides broader context without repeating the entire document.
+- **Cross-Document Understanding:** Processing multiple documents allows the system to recognize related information across different sources.
+- **Better RAG Performance:** Semantic chunking with document context directly improves answer quality by ensuring retrievers can find complete, focused information with appropriate document-level context.
 
 ### The Takeaway
 
