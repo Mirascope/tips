@@ -2,7 +2,7 @@
 
 **Are you struggling to balance prompt caching benefits with dynamic few-shot learning?** Dynamic in-context examples improve quality but reduce cache hits, forcing a tradeoff between performance and cost.
 
-When you use dynamic few-shot prompting, each query potentially gets different examples, which breaks prompt caching. This means you either sacrifice the benefits of prompt caching (lower costs and latency) or the benefits of dynamically selected examples (higher relevance and quality). This tradeoff significantly impacts applications that need both cost efficiency and high-quality, context-aware responses.
+When you use dynamic few-shot prompting, each query potentially gets different examples, which breaks prompt caching. This means you either sacrifice the benefits of prompt caching (lower costs and latency) or the benefits of dynamically selected examples (higher relevance and quality). Even with Google's recent implicit caching for Gemini and other providers improving their caching mechanisms, this fundamental tradeoff remains and significantly impacts applications that need both cost efficiency and high-quality, context-aware responses.
 
 ### The Problem
 
@@ -36,7 +36,7 @@ def retrieve_examples(query: str, k: int = 3) -> list[Example]:
     return [examples[idx] for idx, _ in results]
 
 @anthropic.call(
-    model="claude-3-sonnet-20240229", 
+    model="claude-3-sonnet-20240229",
     response_model=Response,
     extra_headers={"anthropic-beta": "prompt-caching-v0"}
 )
@@ -44,16 +44,17 @@ def retrieve_examples(query: str, k: int = 3) -> list[Example]:
 SYSTEM: You are a helpful assistant that answers questions based on examples.
 
 <examples>
-{examples_block}
+{examples_block:cache_control}
 </examples>
 
 USER: {query}
 """)
 def generate_response(query: str):
     # Each query gets different examples, breaking prompt caching
+    # The :cache_control suffix tells Anthropic where to apply caching
     selected_examples = retrieve_examples(query)
     examples_block = "\n".join([
-        f"QUERY: {ex.query}\nANSWER: {ex.answer}" 
+        f"QUERY: {ex.query}\nANSWER: {ex.answer}"
         for ex in selected_examples
     ])
     return {"computed_fields": {"examples_block": examples_block}}
@@ -124,7 +125,7 @@ def get_cluster_for_query(query: str) -> list[Example]:
     return example_clusters[cluster_id]
 
 @anthropic.call(
-    model="claude-3-sonnet-20240229", 
+    model="claude-3-sonnet-20240229",
     response_model=Response,
     extra_headers={"anthropic-beta": "prompt-caching-v0"}
 )
@@ -134,6 +135,8 @@ SYSTEM: You are a helpful assistant that answers questions based on examples.
 <examples>
 {examples_block}
 </examples>
+
+{:cache_control}
 
 USER: {query}
 """)
@@ -174,6 +177,13 @@ The core idea of clustering examples works with various clustering techniques. H
 ### The Takeaway
 
 Cluster your few-shot examples to find the sweet spot between caching efficiency and example relevance. By grouping similar examples and selecting entire clusters, you can maintain most of the quality benefits of dynamic few-shot examples while still getting substantial prompt caching benefits. This approach is especially valuable for high-volume AI applications where both cost efficiency and response quality are critical.
+
+> **Important:** Provider-specific implementation details make a difference in how clustered few-shot examples integrate with caching:
+> - Google's Gemini now enables implicit caching by default with automatic detection of cacheable content, which can enhance the efficiency of cluster-based examples
+> - OpenAI offers implicit caching with static content at the beginning of prompts, making clustered examples more effective when placed at the start
+> - Anthropic requires explicit `{:cache_control}` markers as shown in the examples above to designate cacheable content
+>
+> Always consult your provider's latest documentation for the most current caching implementation details.
 
 ---
 *Part of the "Effective AI Engineering" series - practical tips for building better applications with AI components.*
