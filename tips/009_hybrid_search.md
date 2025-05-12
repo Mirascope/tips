@@ -6,7 +6,7 @@ When users ask about "reducing UI lag" but your documents mention "improving app
 
 ### The Problem
 
-Many developers approach retrieval by relying solely on either lexical search like BM25. This creates challenges that aren't immediately obvious:
+Many developers approach retrieval by relying solely on either lexical search like BM25 or semantic search with embeddings. This creates challenges that aren't immediately obvious:
 
 ```python
 # BEFORE: Keyword-only retrieval
@@ -71,6 +71,8 @@ def hybrid_retrieve(query: str, k: int = 5):
 - **Complementary Strengths:** BM25 excels at finding exact matches while embeddings capture meaning
 - **Improved Recall:** Retrieves relevant documents that would be missed by either method alone
 - **Better Ranking:** Prioritizes documents that score well in both keyword and semantic relevance
+
+But even this example has a subtle issue! Can you see what it is? Check out Tip #10 to find out!
 
 ### The Takeaway
 
