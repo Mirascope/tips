@@ -1,10 +1,11 @@
 ## Effective AI Engineering #11: Optimize Costs with Prompt Caching
 
-**Are you struggling with high LLM API costs and latency?** Repeated LLM calls with similar prompts can quickly drain your budget and slow down your application.
+Input tokens are EXPENSIVE, so why are you paying for the same tokens again and again?
+Repeated LLM calls with similar prompts can quickly drain your budget and slow down your application.
 
 Every call to an LLM API incurs costs and adds latency to your application. When your application makes multiple calls with similar prompts, you're paying repeatedly for processing the same tokens and waiting for unnecessary computation. This inefficiency compounds as your application scales.
 
-The landscape is evolving rapidly, with Google recently releasing implicit caching for Gemini that automatically caches prompt prefixes without additional configuration, offering significant performance improvements ("aura boost"). Despite these advancements, understanding prompt caching principles remains valuable across all LLM providers.
+The landscape is evolving rapidly, with Google recently releasing implicit caching for Gemini that automatically caches prompt prefixes without additional configuration, offering significant performance improvements. Despite these advancements, understanding prompt caching principles remains valuable across all LLM providers.
 
 ### The Problem
 
