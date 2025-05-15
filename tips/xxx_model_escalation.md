@@ -50,10 +50,9 @@ def is_upper(s: str) -> bool:
 
 # Try a cheaper model first, then fall back to more expensive model if needed
 @fallback(
-    ValidationError,  # Trigger fallback on retry error
+    ValidationError,  # Trigger fallback on ValidationError
     [
         {
-            "catch": ValidationError,
             "provider": "openai",
             "model": "gpt-4o",
             "response_model": Annotated[str, AfterValidator(is_upper)],
