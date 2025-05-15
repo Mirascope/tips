@@ -40,17 +40,8 @@ A better approach implements model escalation: starting with smaller, cheaper mo
 
 ```python
 # AFTER: Model Escalation Strategy
-from anthropic import RateLimitError as AnthropicRateLimitError
 from mirascope import llm
-from mirascope.retries import FallbackError, fallback
-from openai import RateLimitError as OpenAIRateLimitError
-from tenacity import (
-    RetryError,
-    retry,
-    retry_if_exception_type,
-    stop_after_attempt,
-    wait_exponential,
-)
+from mirascope.retries import fallback
 from pydantic import AfterValidator
 from typing import Annotated
 
@@ -59,20 +50,15 @@ def is_upper(s: str) -> bool:
 
 # Try a cheaper model first, then fall back to more expensive model if needed
 @fallback(
-    RetryError,  # Trigger fallback on retry error
+    ValidationError,  # Trigger fallback on retry error
     [
         {
-            "catch": RetryError,
+            "catch": ValidationError,
             "provider": "openai",
             "model": "gpt-4o",
             "response_model": Annotated[str, AfterValidator(is_upper)],
         }
     ],
-)
-@retry(
-    retry=retry_if_exception_type((OpenAIRateLimitError, AnthropicRateLimitError)),
-    stop=stop_after_attempt(3),
-    wait=wait_exponential(multiplier=1, min=4, max=10),
 )
 @llm.call(
     provider="openai", 
