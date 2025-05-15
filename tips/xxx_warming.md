@@ -42,7 +42,7 @@ A better approach is to implement temperature warming: incrementally increasing 
 from mirascope import anthropic, prompt_template
 from tenacity import retry, stop_after_attempt
 from pydantic import BaseModel, AfterValidator, ValidationError
-from typing import Annotated, Optional
+from typing import Annotated
 
 def is_upper(s: str) -> bool:
     return s.isupper()
@@ -56,7 +56,7 @@ def collect_attempts(retry_state):
 @anthropic.call(
     response_model=Annotated[str, AfterValidator(is_upper)],
 )
-def identify_author(book: str, *, attempt: Optional[int] = None) -> str:
+def identify_author(book: str, *, attempt: int | None = None) -> str:
     if attempt is not None:
         # Gradually increase temperature from 0 to 0.7
         temperature = min(0.7, (attempt - 1) * 0.35)
