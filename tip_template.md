@@ -1,6 +1,6 @@
 ## Effective AI Engineering #[Tip Number]: [Tip Title]
 
-**Are you struggling with [specific problem]?** [One sentence description of pain point that resonates with engineers]
+**[Punchy hook statement referencing the pain point]?** [One sentence description of pain point that resonates with engineers]
 
 [2-3 sentences expanding on the problem and its impact on AI applications. Be specific about why this matters.]
 
@@ -18,7 +18,6 @@ Many developers approach this by [describe common approach]. This creates challe
 - **[Issue Category 1]:** [Explain specific problem with this approach]
 - **[Issue Category 2]:** [Explain specific problem with this approach]
 - **[Issue Category 3]:** [Explain specific problem with this approach]
-- **[Issue Category 4]:** [Optional additional issue]
 
 ### The Solution: [Name of Pattern/Approach]
 
@@ -34,7 +33,6 @@ A better approach is to [1-2 sentences introducing the solution]. This [pattern/
 - **[Benefit 1]:** [Explain specific improvement]
 - **[Benefit 2]:** [Explain specific improvement]
 - **[Benefit 3]:** [Explain specific improvement]
-- **[Benefit 4]:** [Optional additional benefit]
 
 ### The Takeaway
 
