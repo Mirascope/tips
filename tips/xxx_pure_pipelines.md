@@ -16,7 +16,8 @@ def customer_support_pipeline(ticket_id: str):
     customer = database.get_customer(ticket.customer_id)
     previous_tickets = database.get_customer_history(ticket.customer_id)
     
-    # Generate response with external inputs
+    # Notice how the prompt is kind of hidden in this function, making
+    # it difficult to reproduce this LLM call in a pure manner
     prompt = f"""
     Respond to this customer support ticket:
     Ticket: {ticket.description}
@@ -43,7 +44,7 @@ def customer_support_pipeline(ticket_id: str):
 - **Unreproducible Evaluations:** External data sources change, making it impossible to compare system outputs over time.
 - **Testing Nightmares:** Unit tests become probabilistic as live data changes, and you can't test without triggering real-world side effects.
 - **Unintended Consequences:** During development and testing, real users receive emails, Slack notifications fire, and database records change.
-- **Impossible to Debug:** When errors occur, you can't replay the exact scenario that caused the failure.
+- **Hard to Debug:** When errors occur, you can't replay the exact scenario that caused the failure.
 - **Limited "What-If" Scenarios:** You can't easily explore alternative approaches by modifying inputs without rebuilding the entire context.
 
 ### The Solution: Pure and Idempotent Pipelines
@@ -53,9 +54,9 @@ A better approach is to separate your AI pipeline into three distinct phases: in
 ```python
 # AFTER: Pure Pipeline with Decoupled Dependencies and Side Effects
 from pydantic import BaseModel
-from typing import List, Optional
+from mirascope import llm, prompt_template
 
-# Step 1: Define clear data models for inputs and outputs
+# Step 1: Define clear data models
 class Ticket(BaseModel):
     id: str
     description: str
@@ -68,77 +69,64 @@ class Customer(BaseModel):
     email: str
 
 class CustomerHistory(BaseModel):
-    tickets: List[str]
+    tickets: list[str]
 
-class SupportPipelineInput(BaseModel):
-    ticket: Ticket
-    customer: Customer
-    history: CustomerHistory
-
-class SupportPipelineOutput(BaseModel):
+class SupportResponse(BaseModel):
     response: str
-    ticket_id: str
-    customer_email: str
-    subject: str
 
-# Step 2: Input collection function - responsibility is ONLY gathering inputs
-def collect_support_inputs(ticket_id: str) -> SupportPipelineInput:
+# Step 2: Define the pure LLM processing function -- this is a pure function we can run and evaluate without worry!
+@llm.call(provider="openai", model="gpt-4o-mini", response_model=SupportResponse)
+@prompt_template("""
+SYSTEM: You are a helpful customer support assistant. Create a professional and helpful response.
+
+USER: Respond to this customer support ticket:
+Ticket: {description}
+Customer Name: {customer_name}
+Previous Issues: {previous_issues}
+""")
+def generate_support_response(description: str, customer_name: str, previous_issues: list[str]): 
+    ...
+
+# Step 3: Separate functions for the three pipeline phases
+def customer_support_pipeline(ticket_id: str) -> str:
+    # Phase 1: Input collection - gather external data
     ticket = database.get_ticket(ticket_id)
     customer = database.get_customer(ticket.customer_id)
     history = database.get_customer_history(ticket.customer_id)
     
-    # Return structured input data
-    return SupportPipelineInput(
-        ticket=ticket,
-        customer=customer,
-        history=history
+    # Phase 2: Pure processing - no side effects
+    response = generate_support_response(
+        description=ticket.description,
+        customer_name=customer.name,
+        previous_issues=history.tickets
     )
-
-# Step 3: Pure processing function - no external calls, only computation
-def process_support_ticket(inputs: SupportPipelineInput) -> SupportPipelineOutput:
-    # Generate response without external dependencies
-    prompt = f"""
-    Respond to this customer support ticket:
-    Ticket: {inputs.ticket.description}
-    Customer Name: {inputs.customer.name}
-    Previous Issues: {inputs.history.tickets}
-    """
     
-    response = llm_client.generate(prompt=prompt)
-    
-    # Return structured output data
-    return SupportPipelineOutput(
-        response=response,
-        ticket_id=inputs.ticket.id,
-        customer_email=inputs.customer.email,
-        subject=inputs.ticket.subject
-    )
-
-# Step 4: Side effect function - responsibility is ONLY executing side effects
-def execute_support_actions(output: SupportPipelineOutput) -> None:
-    database.update_ticket_status(output.ticket_id, "responded")
-    slack.send_message(f"Ticket {output.ticket_id} handled")
+    # Phase 3: Side effects - all external actions grouped together
+    database.update_ticket_status(ticket_id, "responded")
+    slack.send_message(f"Ticket {ticket_id} handled")
     email.send(
-        to=output.customer_email,
-        subject=f"Re: {output.subject}",
-        body=output.response
+        to=customer.email,
+        subject=f"Re: {ticket.subject}",
+        body=response.response
     )
+    
+    return response.response
 
-# Step 5: Orchestrator function that connects the three phases
-def customer_support_pipeline(ticket_id: str) -> str:
-    inputs = collect_support_inputs(ticket_id)
-    outputs = process_support_ticket(inputs)
-    execute_support_actions(outputs)
-    return outputs.response
-
-# For evaluation - we can run just the pure processing part with saved inputs
-def evaluate_support_pipeline(saved_inputs: List[SupportPipelineInput]):
+# Evaluation is now simple - just call the pure function with saved inputs
+def evaluate_support_pipeline(saved_inputs: list[tuple[str, str, list[str]]]):
     results = []
-    for input_case in saved_inputs:
-        output = process_support_ticket(input_case)
-        results.append(output)
+    for description, customer_name, previous_issues in saved_inputs:
+        # Just call the pure function directly - no side effects
+        response = generate_support_response(
+            description=description,
+            customer_name=customer_name,
+            previous_issues=previous_issues
+        )
+        results.append(response)
     return results
 ```
+
+And notice how using mirascope naturally guides us towards pure, idempotent functions!
 
 **Why this approach works better:**
 
