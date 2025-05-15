@@ -90,9 +90,9 @@ def generate_support_response(description: str, customer_name: str, previous_iss
 # Step 3: Separate functions for the three pipeline phases
 def customer_support_pipeline(ticket_id: str) -> str:
     # Phase 1: Input collection - gather external data
-    ticket = database.get_ticket(ticket_id)
-    customer = database.get_customer(ticket.customer_id)
-    history = database.get_customer_history(ticket.customer_id)
+    ticket: Ticket = database.get_ticket(ticket_id)
+    customer: Customer = database.get_customer(ticket.customer_id)
+    history: CustomerHistory = database.get_customer_history(ticket.customer_id)
     
     # Phase 2: Pure processing - no side effects
     response = generate_support_response(
