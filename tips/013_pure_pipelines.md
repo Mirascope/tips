@@ -10,11 +10,25 @@ Many developers build AI pipelines that directly mix external data fetching and 
 
 ```python
 # BEFORE: Tangled Pipeline With External Dependencies and Side Effects
+class Ticket(BaseModel):
+    id: str
+    description: str
+    customer_id: str
+    subject: str
+
+class Customer(BaseModel):
+    id: str
+    name: str
+    email: str
+
+class CustomerHistory(BaseModel):
+    tickets: list[str]
+
 def customer_support_pipeline(ticket_id: str):
     # External dependency - fetch latest ticket data
-    ticket = database.get_ticket(ticket_id)
-    customer = database.get_customer(ticket.customer_id)
-    previous_tickets = database.get_customer_history(ticket.customer_id)
+    ticket: Ticket = database.get_ticket(ticket_id)
+    customer: Customer = database.get_customer(ticket.customer_id)
+    previous_tickets: CustomerHistory = database.get_customer_history(ticket.customer_id)
     
     # Notice how the prompt is kind of hidden in this function, making
     # it difficult to reproduce this LLM call in a pure manner
@@ -56,25 +70,12 @@ A better approach is to separate your AI pipeline into three distinct phases: in
 from pydantic import BaseModel
 from mirascope import llm, prompt_template
 
-# Step 1: Define clear data models
-class Ticket(BaseModel):
-    id: str
-    description: str
-    customer_id: str
-    subject: str
 
-class Customer(BaseModel):
-    id: str
-    name: str
-    email: str
-
-class CustomerHistory(BaseModel):
-    tickets: list[str]
 
 class SupportResponse(BaseModel):
     response: str
 
-# Step 2: Define the pure LLM processing function -- this is a pure function we can run and evaluate without worry!
+# Step 1: Define the pure LLM processing function -- this is a pure function we can run and evaluate without worry!
 @llm.call(provider="openai", model="gpt-4o-mini", response_model=SupportResponse)
 @prompt_template("""
 SYSTEM: You are a helpful customer support assistant. Create a professional and helpful response.
@@ -87,7 +88,7 @@ Previous Issues: {previous_issues}
 def generate_support_response(description: str, customer_name: str, previous_issues: list[str]): 
     ...
 
-# Step 3: Separate functions for the three pipeline phases
+# Step 2: Separate functions for the three pipeline phases
 def customer_support_pipeline(ticket_id: str) -> str:
     # Phase 1: Input collection - gather external data
     ticket: Ticket = database.get_ticket(ticket_id)
