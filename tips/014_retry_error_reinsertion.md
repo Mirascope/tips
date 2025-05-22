@@ -1,4 +1,4 @@
-## Effective AI Engineering #13: Error Reinsertion for Smarter LLM Retries
+## Effective AI Engineering #14: Error Reinsertion for Smarter LLM Retries
 
 **Tired of your LLM just repeating the same mistakes when retries fail?** Simple retry strategies just multiply costs without improving reliability when models fail in consistent ways.
 

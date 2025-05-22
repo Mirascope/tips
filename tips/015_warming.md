@@ -1,4 +1,4 @@
-## Effective AI Engineering #xxx: Temperature Warming for Reliable LLM Responses
+## Effective AI Engineering #x15 Temperature Warming for Reliable LLM Responses
 
 **Are you tired of your LLMs getting stuck in failure patterns?** When your model repeatedly fails with the same error despite multiple retries, a standard retry mechanism just wastes compute and time.
 

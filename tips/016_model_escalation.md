@@ -1,4 +1,8 @@
-## Effective AI Engineering #xxx: Model Escalation for Cost-Effective LLM Reliability
+## Effective AI Engineering #16: Model Escalation for Cost-Effective LLM Reliability
+
+Bigger models are expensive.
+Smaller models don't always work.
+But you can have the best of both worlds.
 
 **Want to optimize both cost and reliability in your LLM applications?** Traditional retry approaches waste resources by repeatedly calling expensive models, but there's a smarter way.
 
