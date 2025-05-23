@@ -13,15 +13,14 @@ Many developers implement chunking and immediately move to indexing without vali
 
 ```python
 # BEFORE: Chunk and Index Without Quality Control
-def process_documents(documents):
-    chunks = []
-    for doc in documents:
-        doc_chunks = chunk_document(doc)
-        chunks.extend(doc_chunks)
-    
-    # Directly index all chunks
-    vector_store.add_documents(chunks)
-    return vector_store
+chunks = []
+for doc in documents:
+    doc_chunks = chunk_document(doc)
+    chunks.extend(doc_chunks)
+
+# Directly index all chunks
+vector_store.add_documents(chunks)
+return vector_store
 ```
 
 **Why this approach falls short:**
