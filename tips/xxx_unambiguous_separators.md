@@ -1,4 +1,4 @@
-## Effective AI Engineering #17: Use Unambiguous Separators in Your Prompts
+## Effective AI Engineering #xxx: Use Unambiguous Separators in Your Prompts
 
 **Is your model suddenly ignoring instructions or mixing up data?** Ambiguous separators let user content "leak" into your prompt structure, causing models to treat data as instructions and produce completely unexpected outputs.
 
