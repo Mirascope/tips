@@ -1,4 +1,4 @@
-## Effective AI Engineering #xxx: Use Explicit Rejection Types for Better Error Handling
+## Effective AI Engineering #18: Use Explicit Rejection Types for Better Error Handling
 
 **Are your AI responses giving wrong answers when they should say "I don't know"?** A confident but incorrect response is often worse than an honest rejection.
 

@@ -1,4 +1,4 @@
-## Effective AI Engineering #xxx: Monitor Chunk Retrieval Rates - Find the Overused and the Forgotten
+## Effective AI Engineering #20: Monitor Chunk Retrieval Rates - Find the Overused and the Forgotten
 
 **Are some chunks in your RAG system carrying all the weight while others sit unused?** Uneven retrieval patterns reveal critical insights about your knowledge base that most teams completely miss.
 

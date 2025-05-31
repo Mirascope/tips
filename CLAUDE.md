@@ -185,6 +185,7 @@ Before finalizing a tip, verify:
 ## Common Pitfalls to Avoid
 
 - **Generic hooks:** Avoid vague statements that don't resonate with specific pain points
+- **Over sensationalized hooks:** Avoid hooks which make the problem seem grandiose, more so than it really is
 - **Toy examples:** Never use oversimplified code that doesn't work in practice
 - **Missing context:** Always explain why the problem matters to AI applications
 - **Incomplete solutions:** Ensure code examples are runnable and complete
