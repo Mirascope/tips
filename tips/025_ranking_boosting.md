@@ -60,14 +60,6 @@ from typing import List, Callable, Tuple
 from datetime import datetime, timedelta
 from dataclasses import dataclass
 
-@dataclass
-class Document:
-    id: str
-    content: str
-    doc_type: str
-    created_date: datetime
-    popularity_score: float = 0.0
-    difficulty_level: str = "intermediate"
 
 @dataclass
 class BoostRule:
@@ -80,26 +72,10 @@ model = SentenceTransformer('all-MiniLM-L6-v2')
 
 boost_rules = [
     BoostRule(
-        name="beginner_content_for_getting_started",
-        condition=lambda q, d: any(term in q.lower() for term in ["start", "begin", "intro"]) 
-                              and d.difficulty_level == "beginner",
-        boost_factor=1.3
-    ),
-    BoostRule(
         name="recent_documentation",
         condition=lambda q, d: d.created_date > datetime.now() - timedelta(days=90),
         boost_factor=1.15
     ),
-    BoostRule(
-        name="popular_content",
-        condition=lambda q, d: d.popularity_score > 0.8,
-        boost_factor=1.2
-    ),
-    BoostRule(
-        name="tutorial_for_how_to_queries", 
-        condition=lambda q, d: "how to" in q.lower() and d.doc_type == "tutorial",
-        boost_factor=1.25
-    )
 ]
 
 @lilypad.trace()
@@ -135,15 +111,6 @@ def rerank_documents_with_boosting(query: str, documents: List[Document]) -> Lis
     boosted_scores.sort(key=lambda x: x[1], reverse=True)
     
     return [doc for doc, boosted_score, base_score in boosted_scores]
-
-# Usage example
-documents = [
-    Document("1", "Advanced API Authentication", "reference", datetime(2024, 1, 1), 0.3, "advanced"),
-    Document("2", "Getting Started with Our API", "tutorial", datetime(2024, 11, 1), 0.9, "beginner"),
-    Document("3", "Quick Start Guide", "guide", datetime(2024, 10, 15), 0.8, "beginner")
-]
-
-results = rerank_documents_with_boosting("how do I get started with the API?", documents)
 ```
 
 **Why this approach works better:**
