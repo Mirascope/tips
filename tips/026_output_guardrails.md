@@ -97,7 +97,7 @@ def generate_customer_response(query: str) -> str:
 def safe_customer_response(query: str) -> str:
     # Generate initial response
     response = generate_customer_response(query)
-    # Validate output safety
+    # Validate output safety. You could also use other heuristics to check safety!
     safety_result = ai_safety_check(response)
     return response.content if safety_result.is_safe else  "I apologize, but I'm unable to provide that information. Is there something else I can help you with?"
 
