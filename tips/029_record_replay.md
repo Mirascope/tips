@@ -1,26 +1,28 @@
 ## Effective AI Engineering #29: Record and Replay
 
-**Last Tuesday at 2 AM, our support chatbot told a customer to "delete their account" instead of helping with a billing issue.** The logs showed the pipeline ran fine, but when I tried to reproduce it the next morning, the AI generated perfectly reasonable responses every single time.
+3 hours. 127 runs. 2 half empty lattes. And no progress.
+Your most important customer got a strange response from your AI chat bot.
+You followed best practices. You decomposed into multiple tasks. You added instrumentation.
+But now you have a debugging nightmare: a complex AI workflows with multiple chained LLM calls.
+How the hell can you debug something like this??
 
-Complex AI workflows with multiple chained LLM calls create debugging nightmares. When failures occur deep in a pipeline, isolating the root cause requires reproducing exact conditions - model responses, context, and state that may be impossible to recreate.
+Take a deep breath; and follow along!
 
 ### The Problem
 
+When failures occur deep in a pipeline, isolating the root cause requires reproducing exact conditions - model responses, context, and state that may be impossible to recreate.
 Many developers try to debug AI pipelines by re-running them from scratch, hoping to recreate the failure. This creates challenges that aren't immediately obvious:
 
 ```python
 # BEFORE: No replay capability
-from mirascope.core import anthropic, prompt_template
-import lilypad
+from mirascope import llm, prompt_template
 
-@lilypad.trace()
-@anthropic.call("claude-3-5-sonnet-20241022")
+@llm.call(provider="anthropic", model="claude-3-5-sonnet-20241022")
 @prompt_template("Classify the sentiment of this message: {text}")
 def classify_sentiment(text: str) -> str:
     pass
 
-@lilypad.trace()
-@anthropic.call("claude-3-5-sonnet-20241022")
+@llm.call(provider="anthropic", model="claude-3-5-sonnet-20241022")
 @prompt_template("Generate a helpful response for a {sentiment} customer message: {text}")
 def generate_response(sentiment: str, text: str) -> str:
     pass
@@ -43,62 +45,22 @@ result = process_customer_message("I can't access my billing information")
 ### The Solution: LLM Cassette Recording
 
 A better approach is to record LLM interactions to "cassettes" that can be replayed exactly, similar to how VCRpy works for HTTP requests. This pattern captures problematic responses and lets you debug them repeatedly without making new API calls.
+You can even manually _edit_ the saved "cassettes" to provide the exact output you're looking for!
 
 ```python
 # AFTER: Simple cassette recording decorator
-from mirascope.core import anthropic, prompt_template
-import lilypad
-import json
-import os
-from functools import wraps
-from typing import Any, Dict
+from mirascope import llm, prompt_template
+import vcry
 
-def use_cassette(cassette_name: str):
-    """Decorator that records/replays LLM calls to a cassette file"""
-    def decorator(func):
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            cassette_path = f"cassettes/{cassette_name}.json"
-            
-            # Create cassettes directory if it doesn't exist
-            os.makedirs("cassettes", exist_ok=True)
-            
-            # Create a key from function name and arguments
-            call_key = f"{func.__name__}:{str(args)}:{str(sorted(kwargs.items()))}"
-            
-            # Try to load existing cassette
-            cassette_data = {}
-            if os.path.exists(cassette_path):
-                with open(cassette_path, 'r') as f:
-                    cassette_data = json.load(f)
-            
-            # Check if we have a recorded response
-            if call_key in cassette_data:
-                print(f"🎬 Replaying {func.__name__} from cassette")
-                return cassette_data[call_key]
-            
-            # No recording found - make real call and record it
-            print(f"🔴 Recording {func.__name__} to cassette")
-            result = func(*args, **kwargs)
-            
-            # Save the result to cassette
-            cassette_data[call_key] = result
-            with open(cassette_path, 'w') as f:
-                json.dump(cassette_data, f, indent=2)
-            
-            return result
-        return wrapper
-    return decorator
-
-# Use the cassette decorator on your AI functions
-@use_cassette('customer_support_debug')
+# First time this is run will record the HTTP requests; second time will replay them
+@vcr.use_cassette()
 @lilypad.trace()
 @anthropic.call("claude-3-5-sonnet-20241022")
 @prompt_template("Classify the sentiment of this message: {text}")
 def classify_sentiment(text: str) -> str:
     pass
 
-@use_cassette('customer_support_debug')
+
 @lilypad.trace()
 @anthropic.call("claude-3-5-sonnet-20241022")
 @prompt_template("Generate a helpful response for a {sentiment} customer message: {text}")
@@ -115,7 +77,7 @@ print("Processing problematic message...")
 result = process_customer_message("I can't access my billing information")
 print(f"Result: {result}")
 
-# Subsequent runs replay identical responses for debugging
+# Subsequent runs replay identical sentiment classification for debuggin.
 print("\nDebugging with identical responses...")
 debug_result = process_customer_message("I can't access my billing information")
 print(f"Debug result: {debug_result}")
@@ -129,7 +91,7 @@ print(f"Debug result: {debug_result}")
 
 ### The Takeaway
 
-Cassette recording transforms unpredictable AI debugging into systematic troubleshooting by capturing exact responses. This simple decorator pattern makes elusive bugs reproducible and eliminates the cost of repeated debugging attempts.
+Record/replay functionality can transform unpredictable AI debugging into systematic troubleshooting by capturing exact responses. This simple decorator pattern makes elusive bugs reproducible and eliminates the cost of repeated debugging attempts.
 
 ---
 *Part of the "Effective AI Engineering" series - practical tips for building better applications with AI components.*
