@@ -1,8 +1,9 @@
 ## Effective AI Engineering #32: PII Masking
 
-Just waiting for the other shoe to drop. Your customer success operations are best in class.
-But your use of LLMs to help customer success agents has created a huge liability.
-Emails, phone numbers, and addresses copy and pasted right into the LLM. Sent off to third party providers.
+Just waiting for the other shoe to drop. LLMs have mad your customer support agents best in class.
+But it's also created a huge risk: copy and pasted customer data into third-party AIs.
+Emails, phone numbers, and addresses copy and pasted right into the LLM.
+Sent off to third party providers without user consent.
 
 One day your users will find out.
 That'll be a bad day.
