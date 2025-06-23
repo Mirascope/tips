@@ -1,7 +1,7 @@
 ## Effective AI Engineering #30: Speculative Calls
 
-Your fraud detection just got a whole lot better.
-The catch? It's way slower too. It takes almost as much time as your core logic now!
+Your fraud and abuse detection just got a whole lot better.
+The catch? Also much slower. It takes almost as much time as your core logic now!
 
 "Will users wait around that long?" You think to yourself.
 You'd rather not find out.
