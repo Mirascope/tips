@@ -1,8 +1,10 @@
 ## Effective AI Engineering #28: Input Guardrails
 
-**Last Tuesday at 2 AM, your startup's AI chatbot got prompt injected.** Within six hours, attackers had burned through your monthly OpenAI budget trying to extract your system prompts and generate harmful content. Your monitoring dashboard showed 50,000 failed requests – each one hitting your most expensive model.
-
-Input filtering at the application layer can block problematic queries before they consume costly LLM resources. This first line of defense also reduces latency and provides more reliable rejection than depending on LLM behavior alone.
+It's 2 AM. The twitter screenshot open in one tab. 50,000 logs of malicius requests in the other.
+How did they get my AI chatbot to generate harmful content? And why did they have to post it on twitter?
+You try to open your eyes bigger as if that would somehow make the problem reveal itself.
+You thought your prompt would prevent this.
+Let me show you the better way.
 
 ### The Problem
 
@@ -25,7 +27,7 @@ def handle_customer_query(user_input: str) -> str:
 **Why this approach falls short:**
 
 - **Resource Waste:** Malicious queries consume expensive LLM tokens even when they'll be rejected
-- **Inconsistent Blocking:** LLMs might occasionally comply with harmful requests despite instructions
+- **Inconsistent User Experience:** LLMs might occasionally comply with harmful requests despite instructions
 - **High Latency:** Every query requires full LLM processing before potential rejection
 
 ### The Solution: Pre-Processing Input Classification
@@ -39,8 +41,8 @@ from pydantic import BaseModel
 import lilypad
 
 class InputClassification(BaseModel):
-    is_safe: bool
     reasoning: str
+    is_safe: bool
 
 @lilypad.trace()
 @llm.call(provider="openai", model="gpt-4o-mini", response_model=InputClassification)
