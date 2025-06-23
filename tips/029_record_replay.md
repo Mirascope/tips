@@ -19,13 +19,13 @@ from mirascope import llm, prompt_template
 
 @llm.call(provider="anthropic", model="claude-3-5-sonnet-20241022")
 @prompt_template("Classify the sentiment of this message: {text}")
-def classify_sentiment(text: str) -> str:
-    pass
+def classify_sentiment(text: str) -> str: ...
+
 
 @llm.call(provider="anthropic", model="claude-3-5-sonnet-20241022")
 @prompt_template("Generate a helpful response for a {sentiment} customer message: {text}")
-def generate_response(sentiment: str, text: str) -> str:
-    pass
+def generate_response(sentiment: str, text: str) -> str: ...
+
 
 def process_customer_message(message: str) -> str:
     sentiment = classify_sentiment(message)
@@ -57,15 +57,14 @@ import vcry
 @lilypad.trace()
 @anthropic.call("claude-3-5-sonnet-20241022")
 @prompt_template("Classify the sentiment of this message: {text}")
-def classify_sentiment(text: str) -> str:
-    pass
+def classify_sentiment(text: str) -> str: ...
 
 
 @lilypad.trace()
 @anthropic.call("claude-3-5-sonnet-20241022")
 @prompt_template("Generate a helpful response for a {sentiment} customer message: {text}")
-def generate_response(sentiment: str, text: str) -> str:
-    pass
+def generate_response(sentiment: str, text: str) -> str: ...
+
 
 def process_customer_message(message: str) -> str:
     sentiment = classify_sentiment(message)
