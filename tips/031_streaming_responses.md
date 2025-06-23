@@ -1,8 +1,11 @@
 ## Effective AI Engineering #31: Streaming Responses
 
-**Picture this: Sarah clicks 'Generate Report' and watches a spinner for 8 seconds.** Meanwhile, her AI has already written the first three paragraphs—but she's seeing nothing, growing more impatient by the second.
+Users love your report generation. That is if it loads in time.
+After 1 second, users have gone to another tab.
+And forget to come back. Your product seems impossible to produce without AI.
+But why does it have to be so slow?
 
-This is the daily reality for users of AI applications that wait for complete responses. While the AI starts generating valuable content within milliseconds, users see nothing until the very last token arrives. The result? What feels like a slow, unresponsive application even when your AI is blazing fast.
+Let me show you a better way.
 
 ### The Problem
 
@@ -18,7 +21,7 @@ def recommend_book(genre: str) -> str:
 
 # User waits for entire response
 response = recommend_book("fantasy")
-print(response)  # Shows complete response after 3-5 seconds
+print(response)  # Shows complete response only after the entire thing has been generated!
 ```
 
 **Why this approach falls short:**
