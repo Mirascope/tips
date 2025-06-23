@@ -1,217 +1,115 @@
 ## Effective AI Engineering #30: Speculative Calls
 
-**Are your users waiting seconds for simple yes/no decisions?** Your AI classifies user intent, then routes to the appropriate handler, but that sequential flow adds unnecessary latency to your hot path.
+**You're running fraud detection on every transaction, but 99% of them are legitimate.** While your AI classifier determines if a payment is fraudulent, legitimate customers wait unnecessarily for their transactions to process.
 
-When AI workflows involve classification followed by specialized processing, the linear approach forces users to wait for each step. But if you can predict the likely outcome, you can start expensive work early and provide instant responses.
+Most fraud detection systems classify first, then process. But when the vast majority of transactions are legitimate, you can start processing the payment while classification runs in parallel, canceling only if fraud is detected.
 
 ### The Problem
 
-Many developers implement AI workflows as strict sequences, waiting for each step before starting the next. This creates challenges that aren't immediately obvious:
+Many developers implement fraud detection by classifying first, then processing the transaction. This creates challenges that aren't immediately obvious:
 
 ```python
-# BEFORE: Sequential processing with classification bottleneck
-from mirascope.core import llm
+# BEFORE: Sequential fraud detection blocks payment processing
+from mirascope.core import anthropic, prompt_template
 import lilypad
 import time
 
 @lilypad.trace()
-@llm.call(provider="openai", model="gpt-4o-mini")
-def classify_request(user_request: str) -> str:
-    return f"Classify this request as 'simple' or 'complex': {user_request}"
+@anthropic.call("claude-3-5-sonnet-20241022")
+@prompt_template("Analyze this transaction for fraud: {transaction_data}")
+def classify_transaction(transaction_data: str) -> str:
+    pass
 
 @lilypad.trace()
-@llm.call(provider="openai", model="gpt-4o-mini")
-def handle_simple_request(user_request: str) -> str:
-    return f"Handle this simple request: {user_request}"
+def process_payment(transaction_data: str) -> str:
+    # Simulate payment processing
+    time.sleep(0.5)  # API calls to payment processor
+    return f"Payment processed for: {transaction_data}"
 
 @lilypad.trace()
-@llm.call(provider="openai", model="gpt-4o-mini")
-def handle_complex_request(user_request: str) -> str:
-    return f"Handle this complex request with detailed analysis: {user_request}"
-
-@lilypad.trace()
-def process_user_request(user_request: str) -> str:
+def handle_transaction(transaction_data: str) -> str:
     start_time = time.time()
     
-    # Step 1: Classify (adds latency)
-    classification = classify_request(user_request)
-    print(f"Classification took: {time.time() - start_time:.2f}s")
+    # Step 1: Check for fraud first (adds latency for all transactions)
+    fraud_result = classify_transaction(transaction_data)
+    print(f"Fraud classification took: {time.time() - start_time:.2f}s")
     
-    # Step 2: Route based on classification
-    if classification == "simple":
-        result = handle_simple_request(user_request)
+    # Step 2: Process payment only if not fraud
+    if "fraud" not in fraud_result.lower():
+        result = process_payment(transaction_data)
+        print(f"Total time: {time.time() - start_time:.2f}s")
+        return result
     else:
-        result = handle_complex_request(user_request)
-    
-    print(f"Total time: {time.time() - start_time:.2f}s")
-    return result
+        return "Transaction blocked: fraud detected"
 
-# Sequential approach - classification blocks processing
-result = process_user_request("What's the weather like?")
+# Every legitimate transaction waits for fraud classification
+result = handle_transaction("$50 coffee purchase from regular merchant")
 ```
 
 **Why this approach falls short:**
 
-- **Sequential Latency:** Users wait for classification before any real work begins
-- **Underutilized Resources:** System idles during classification instead of doing useful work
-- **Poor User Experience:** Simple requests feel slow despite having fast answers
+- **Sequential Latency:** Every legitimate transaction waits for fraud detection before processing
+- **Underutilized Resources:** Payment systems idle during classification instead of doing useful work
+- **Poor Customer Experience:** Simple purchases feel slow despite being completely legitimate
 
 ### The Solution: Parallel Speculative Execution
 
-A better approach is to predict likely outcomes and start work speculatively in parallel with classification. This pattern optimizes for the common case while gracefully handling mispredictions.
+A better approach is to start payment processing in parallel with fraud detection, since most transactions are legitimate. This pattern optimizes for the common case while canceling work if fraud is detected.
 
 ```python
-# AFTER: Speculative parallel processing
-from mirascope.core import llm
+# AFTER: Parallel fraud detection with speculative processing
+from mirascope.core import anthropic, prompt_template
 import lilypad
 import asyncio
 import time
-from typing import Tuple
-
-# Simple heuristics for quick prediction
-simple_patterns = [
-    "what's the weather",
-    "what time is it",
-    "hello",
-    "how are you",
-    "thank you"
-]
-
-def predict_classification(request: str) -> Tuple[str, float]:
-    """Quick prediction based on patterns - no LLM call"""
-    request_lower = request.lower()
-    
-    for pattern in simple_patterns:
-        if pattern in request_lower:
-            return "simple", 0.85  # High confidence
-    
-    # Default to complex for unknown patterns
-    return "complex", 0.6  # Lower confidence for unknown patterns
 
 @lilypad.trace()
-@llm.call(provider="openai", model="gpt-4o-mini")
-async def classify_request_async(user_request: str) -> str:
-    return f"Classify this request as 'simple' or 'complex': {user_request}"
+@anthropic.call("claude-3-5-sonnet-20241022")
+@prompt_template("Analyze this transaction for fraud: {transaction_data}")
+async def classify_transaction_async(transaction_data: str) -> str:
+    pass
 
 @lilypad.trace()
-@llm.call(provider="openai", model="gpt-4o-mini")
-async def handle_simple_request_async(user_request: str) -> str:
-    return f"Handle this simple request: {user_request}"
+async def process_payment_async(transaction_data: str) -> str:
+    # Simulate payment processing
+    await asyncio.sleep(0.5)  # API calls to payment processor
+    return f"Payment processed for: {transaction_data}"
 
 @lilypad.trace()
-@llm.call(provider="openai", model="gpt-4o-mini")
-async def handle_complex_request_async(user_request: str) -> str:
-    return f"Handle this complex request with detailed analysis: {user_request}"
-
-@lilypad.trace()
-async def speculative_request_processor(user_request: str, confidence_threshold: float = 0.8) -> str:
+async def handle_transaction_speculative(transaction_data: str) -> str:
     start_time = time.time()
     
-    # Quick prediction without LLM
-    predicted_type, confidence = predict_classification(user_request)
-    print(f"Predicted: {predicted_type} (confidence: {confidence:.2f})")
+    # Start both fraud detection AND payment processing in parallel
+    fraud_task = asyncio.create_task(classify_transaction_async(transaction_data))
+    payment_task = asyncio.create_task(process_payment_async(transaction_data))
     
-    if confidence >= confidence_threshold:
-        # High confidence - start speculative processing immediately
-        print(f"Starting speculative {predicted_type} processing...")
-        
-        if predicted_type == "simple":
-            # Start simple processing immediately, verify classification in parallel
-            simple_task = asyncio.create_task(handle_simple_request_async(user_request))
-            classification_task = asyncio.create_task(classify_request_async(user_request))
-            
-            # Wait for whichever finishes first
-            done, pending = await asyncio.wait(
-                [simple_task, classification_task],
-                return_when=asyncio.FIRST_COMPLETED
-            )
-            
-            if simple_task in done:
-                # Speculative execution won - return result immediately
-                result = simple_task.result()
-                print(f"Speculative hit! Time: {time.time() - start_time:.2f}s")
-                
-                # Cancel classification if still running
-                if classification_task in pending:
-                    classification_task.cancel()
-                
-                return result
-            else:
-                # Classification finished first - check if prediction was correct
-                actual_classification = classification_task.result()
-                if actual_classification == "simple":
-                    # Prediction was correct - wait for simple processing
-                    result = await simple_task
-                    print(f"Speculative hit (verified)! Time: {time.time() - start_time:.2f}s")
-                    return result
-                else:
-                    # Prediction was wrong - cancel and do complex processing
-                    simple_task.cancel()
-                    print("Speculative miss - switching to complex processing")
-                    result = await handle_complex_request_async(user_request)
-                    print(f"Corrected result time: {time.time() - start_time:.2f}s")
-                    return result
-        else:
-            # Predicted complex - still speculate but verify
-            complex_task = asyncio.create_task(handle_complex_request_async(user_request))
-            classification_task = asyncio.create_task(classify_request_async(user_request))
-            
-            # Wait for classification to verify prediction
-            actual_classification = await classification_task
-            
-            if actual_classification == "complex":
-                # Prediction correct - wait for complex result
-                result = await complex_task
-                print(f"Complex speculative hit! Time: {time.time() - start_time:.2f}s")
-                return result
-            else:
-                # Prediction wrong - cancel and do simple processing
-                complex_task.cancel()
-                print("Speculative miss - switching to simple processing")
-                result = await handle_simple_request_async(user_request)
-                print(f"Corrected result time: {time.time() - start_time:.2f}s")
-                return result
+    # Wait for fraud classification to complete first
+    fraud_result = await fraud_task
+    
+    if "fraud" in fraud_result.lower():
+        # Fraud detected - cancel the payment processing
+        payment_task.cancel()
+        print(f"Fraud detected, payment canceled: {time.time() - start_time:.2f}s")
+        return "Transaction blocked: fraud detected"
     else:
-        # Low confidence - fall back to sequential processing
-        print("Low confidence - using sequential processing")
-        classification = await classify_request_async(user_request)
-        
-        if classification == "simple":
-            result = await handle_simple_request_async(user_request)
-        else:
-            result = await handle_complex_request_async(user_request)
-        
-        print(f"Sequential fallback time: {time.time() - start_time:.2f}s")
-        return result
+        # Legitimate transaction - wait for payment to complete
+        payment_result = await payment_task
+        print(f"Total time: {time.time() - start_time:.2f}s")
+        return payment_result
 
-# Example usage showing latency improvements
-async def test_speculative_processing():
-    test_requests = [
-        "What's the weather like?",  # Predicted simple - should be fast
-        "Hello there!",              # Predicted simple - should be fast  
-        "Analyze the market trends for Q4", # Predicted complex
-        "Can you help me debug this complex algorithm?" # Predicted complex
-    ]
-    
-    for request in test_requests:
-        print(f"\n=== Processing: {request} ===")
-        result = await speculative_request_processor(request)
-        print(f"Result: {result[:50]}...")
-
-# Run the test
-if __name__ == "__main__":
-    asyncio.run(test_speculative_processing())
+# Legitimate transactions get faster processing
+result = asyncio.run(handle_transaction_speculative("$50 coffee purchase from regular merchant"))
 ```
 
 **Why this approach works better:**
 
-- **Reduced Latency:** Common cases get instant responses without waiting for classification
-- **Cost-Optimized Speculation:** Only speculate when confidence is high, avoiding wasteful parallel calls
-- **Graceful Fallback:** Mispredictions are detected and corrected without user impact
+- **Reduced Latency:** Legitimate transactions complete faster since payment processing starts immediately
+- **Optimized for Common Case:** Since 99% of transactions are valid, speculation pays off almost always
+- **Increased Costs:** You'll run payment processing for fraudulent transactions too, increasing computational costs
 
 ### The Takeaway
 
-Speculative calls eliminate classification bottlenecks by starting likely work in parallel, dramatically reducing latency for predictable requests. This pattern optimizes user experience for common cases while maintaining correctness.
+Speculative calls eliminate classification bottlenecks by starting likely work in parallel, dramatically reducing latency when most cases follow the happy path. This pattern trades slightly higher costs for significantly better user experience on legitimate transactions.
 
 ---
 *Part of the "Effective AI Engineering" series - practical tips for building better applications with AI components.*
