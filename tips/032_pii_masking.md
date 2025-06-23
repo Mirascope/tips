@@ -18,7 +18,7 @@ Many developers send user inputs directly to AI models without sanitizing person
 # BEFORE: Raw PII sent to AI models
 from mirascope import llm, prompt_template
 
-@anthropic.call(provider="anthropic", model="claude-3-5-sonnet-20241022")
+@llm.call(provider="anthropic", model="claude-3-5-sonnet-20241022")
 @prompt_template("Help this customer with their request: {customer_message}")
 def handle_customer_support(customer_message: str): ...
 
@@ -42,65 +42,35 @@ A better approach is to mask PII before sending to AI services, then restore the
 # AFTER: PII masking with Presidio
 from mirascope import llm, prompt_template
 
-from presidio_anonymizer import AnonymizerEngine
-from presidio_anonymizer.entities import OperatorConfig
-import lilypad
-
-# Initialize Presidio engines
-analyzer = AnalyzerEngine()
-anonymizer = AnonymizerEngine()
+from presidio_analyzer import AnalyzerEngine
 
 def mask_pii(text: str) -> tuple[str, dict[str, str]]:
     """Detect and mask PII using Presidio"""
+    analyzer = AnalyzerEngine()
+    
     # Analyze text for PII
     results = analyzer.analyze(text=text, language='en')
-    
-    # Create anonymization config with reversible placeholders
-    operators = {}
-    for result in results:
-        operators[result.entity_type] = OperatorConfig("custom", {"lambda": lambda _: f"<{result.entity_type}>"})
-    
-    # Anonymize the text
-    anonymized_result = anonymizer.anonymize(
-        text=text,
-        analyzer_results=results,
-        operators=operators
-    )
-    
-    # Create mapping to restore original values
-    mapping = {}
-    for item in anonymized_result.items:
-        if item.operator == "custom":
-            original_text = text[item.start:item.end]
-            mapping[item.text] = original_text
-    
-    return anonymized_result.text, mapping
+    mapping = {f"<{result.entity_type}>": text[result.start:result.end] for result in results}
+    inverse_mapping = {v: k for k, v in mapping.items()}
+    return unmask_pii(text, inverse_mapping), mapping
+
+def unmask_pii(text: str, mapping: dict[str, str]) -> str:
+    for k, v in mapping.items():
+        text = text.replace(k, v)
+    return text
 
 
-def restore_pii(text: str, mapping: dict[str, str]) -> str:
-    """Restore original PII values from anonymized text"""
-    restored_text = text
-    for placeholder, original in mapping.items():
-        restored_text = restored_text.replace(placeholder, original)
-    return restored_text
-
-
-@anthropic.call(provider="anthropic", model="claude-3-5-sonnet-20241022")from presidio_analyzer import AnalyzerEngine
+@llm.call(provider="anthropic", model="claude-3-5-sonnet-20241022")from presidio_analyzer import AnalyzerEngine
 @prompt_template("Help this customer with their request: {customer_message}")
 def handle_masked_customer_support(customer_message: str): ...
 
-@lilypad.trace()
 def secure_customer_support(customer_message: str) -> str:
     # Step 1: Mask PII before sending to AI
     masked_message, pii_mapping = mask_pii(customer_message)
-    
     # Step 2: Process with AI using masked data
     masked_response = handle_masked_customer_support(masked_message)
-    
     # Step 3: Restore PII in the response
-    final_response = restore_pii(masked_response, pii_mapping)
-    
-    return final_response
+    return restore_pii(masked_response, pii_mapping)
 
 # Example usage
 message = "My email john.doe@company.com isn't receiving notifications and my phone 555-123-4567 needs to be updated"
