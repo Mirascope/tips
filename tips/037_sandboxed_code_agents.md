@@ -1,339 +1,291 @@
 ## Effective AI Engineering #37: Sandboxed Code Agents
 
-**Are you tired of slow tool-calling loops for complex multi-step tasks?** Your AI agent calls one tool, waits for your response, calls another tool, waits again - turning a 30-second script into a 5-minute conversation.
+**Why give your AI agent a single screwdriver when it could have an entire workshop?** Tool-calling agents are limited by the specific functions you've pre-defined, but a code agent can write custom logic to solve any problem.
 
-Code agents can generate and execute complete workflows in one shot, dramatically reducing latency and token costs. But running AI-generated code on your system without isolation is like giving a stranger root access to your servers.
+The catch? A non-sandboxed code agent has the same risks as uncontrolled tool calling, except with a vastly larger attack surface. Instead of being constrained to your predefined tools, the AI can write code to do literally anything - access files, make network calls, modify system settings, or worse.
 
 ### The Problem
 
-Many developers either avoid code agents due to security concerns or run them without proper isolation. This creates challenges that aren't immediately obvious:
+Many developers stick with tool-calling agents because they feel safer, but this severely limits what their AI can accomplish. This creates challenges that aren't immediately obvious:
 
 ```python
-# BEFORE: Slow tool-calling loops or unsafe code execution
-from mirascope.core import llm
+# BEFORE: Limited tool-calling agent
+from mirascope.core import anthropic, prompt_template
 import lilypad
-import subprocess
-import os
+from typing import List
 
-@llm.call(provider="openai", model="gpt-4o-mini")
-def tool_based_agent(user_request: str) -> str:
-    return f"""
-    You have access to these tools:
-    - run_shell_command(cmd): Execute shell commands
-    - read_file(path): Read file contents  
-    - write_file(path, content): Write content to file
+class DataAnalysisTools:
+    @staticmethod
+    def calculate_average(numbers: List[float]) -> float:
+        """Calculate average of a list of numbers"""
+        return sum(numbers) / len(numbers) if numbers else 0
     
-    User request: {user_request}
+    @staticmethod
+    def find_max_value(numbers: List[float]) -> float:
+        """Find maximum value in a list"""
+        return max(numbers) if numbers else 0
     
-    Complete this task step by step using the available tools.
-    """
+    @staticmethod
+    def calculate_growth_rate(old_value: float, new_value: float) -> float:
+        """Calculate percentage growth rate"""
+        if old_value == 0:
+            return 0
+        return ((new_value - old_value) / old_value) * 100
 
-def run_shell_command(cmd: str) -> str:
-    """Dangerous: executes directly on host system"""
-    try:
-        result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
-        return f"Output: {result.stdout}\nError: {result.stderr}"
-    except Exception as e:
-        return f"Error: {e}"
+@lilypad.trace()
+@anthropic.call("claude-3-5-sonnet-20241022")
+@prompt_template("""
+You are a data analysis assistant. You have access to these tools:
+- calculate_average(numbers): Calculate average of numbers
+- find_max_value(numbers): Find maximum value
+- calculate_growth_rate(old_value, new_value): Calculate growth rate
 
-# Alternative: Multi-turn tool calling (slow and expensive)
-@llm.call(provider="openai", model="gpt-4o-mini")
-def unsafe_code_agent(user_request: str) -> str:
-    return f"""
-    Generate Python code to complete this task: {user_request}
+Analyze this sales data: {sales_data}
+
+Use the available tools to:
+1. Calculate the average sales
+2. Find the highest sales month
+3. Calculate month-over-month growth rates
+
+You must call each tool separately and combine the results.
+""")
+def tool_calling_agent(sales_data: List[float]) -> str:
+    pass
+
+# This requires multiple LLM calls and tool orchestration
+def analyze_with_tools(sales_data: List[float]):
+    tools = DataAnalysisTools()
     
-    The code should be complete and executable.
-    """
-
-def execute_ai_code_unsafely(code: str) -> str:
-    """Extremely dangerous: executes AI code directly"""
-    try:
-        exec(code)  # Never do this!
-        return "Code executed"
-    except Exception as e:
-        return f"Error: {e}"
-
-# Both approaches have major issues:
-# 1. Tool calling: Slow, expensive, lots of round trips
-# 2. Direct exec: Fast but completely unsafe
+    # Step 1: Calculate average (LLM call + tool call)
+    avg = tools.calculate_average(sales_data)
+    
+    # Step 2: Find max (another LLM call + tool call)  
+    max_val = tools.find_max_value(sales_data)
+    
+    # Step 3: Calculate growth rates (multiple LLM calls)
+    growth_rates = []
+    for i in range(1, len(sales_data)):
+        rate = tools.calculate_growth_rate(sales_data[i-1], sales_data[i])
+        growth_rates.append(rate)
+    
+    # Step 4: Final analysis (another LLM call)
+    return f"Average: {avg}, Max: {max_val}, Growth rates: {growth_rates}"
 ```
 
 **Why this approach falls short:**
 
-- **Security Risks:** AI-generated code could access sensitive files, make network calls, or damage the system
-- **Latency Issues:** Tool-calling loops require multiple LLM round trips for complex tasks
-- **Limited Capability:** Tool-based agents can't perform complex logic or state management
+- **Rigid Limitations:** Can only perform operations you've pre-defined as tools
+- **Multiple Round Trips:** Each analysis step requires separate LLM calls and tool orchestration
+- **No Complex Logic:** Can't perform sophisticated data transformations or statistical analysis beyond basic tools
 
-### The Solution: Docker-Sandboxed Code Agents
+### The Solution: E2B Sandboxed Code Agents
 
-A better approach is to execute AI-generated code in isolated Docker containers with restricted capabilities. This pattern provides the speed and flexibility of code agents while maintaining security through containerization.
+A better approach is to let your AI generate complete code solutions and execute them safely in E2B's cloud sandboxes. This pattern provides the flexibility of code agents while maintaining security through proper isolation.
 
 ```python
-# AFTER: Secure code agents with Docker sandboxing
+# AFTER: Sandboxed code agent with E2B
 from mirascope.core import anthropic, prompt_template
+from e2b_code_interpreter import Sandbox
 import lilypad
-import docker
-import tempfile
-import os
+from typing import List, Dict, Any
 import json
-from typing import Dict, Any, Optional
-from dataclasses import dataclass
-
-@dataclass
-class SandboxResult:
-    success: bool
-    output: str
-    error: Optional[str] = None
-    execution_time: float = 0.0
-    resource_usage: Dict[str, Any] = None
-
-class SecureCodeSandbox:
-    def __init__(self):
-        self.client = docker.from_env()
-        self.base_image = "python:3.11-slim"
-        self.container_limits = {
-            "mem_limit": "128m",  # Limit memory
-            "cpu_period": 100000,
-            "cpu_quota": 50000,   # Limit CPU to 50%
-            "network_mode": "none",  # No network access
-        }
-    
-    def create_restricted_dockerfile(self) -> str:
-        """Create a minimal Python environment with restricted capabilities"""
-        return """
-FROM python:3.11-slim
-
-# Remove potentially dangerous tools
-RUN apt-get update && apt-get remove -y --purge curl wget && \
-    apt-get autoremove -y && apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# Create non-root user
-RUN useradd -m -s /bin/bash sandbox
-USER sandbox
-WORKDIR /home/sandbox
-
-# Install allowed packages only
-RUN pip install --user pandas numpy matplotlib requests-cache
-
-# Set up restricted environment
-ENV PATH="/home/sandbox/.local/bin:$PATH"
-"""
-
-    @lilypad.trace()
-    def execute_code_safely(self, code: str, timeout: int = 30) -> SandboxResult:
-        """Execute Python code in a secure Docker container"""
-        
-        # Create temporary directory for code
-        with tempfile.TemporaryDirectory() as temp_dir:
-            code_file = os.path.join(temp_dir, "agent_code.py")
-            
-            # Write code to file
-            with open(code_file, "w") as f:
-                f.write(code)
-            
-            try:
-                # Create and run container
-                container = self.client.containers.run(
-                    self.base_image,
-                    command=f"python /code/agent_code.py",
-                    volumes={temp_dir: {"bind": "/code", "mode": "ro"}},
-                    remove=True,
-                    detach=False,
-                    stdout=True,
-                    stderr=True,
-                    timeout=timeout,
-                    **self.container_limits
-                )
-                
-                output = container.decode('utf-8')
-                
-                return SandboxResult(
-                    success=True,
-                    output=output,
-                    execution_time=timeout  # Simplified
-                )
-                
-            except docker.errors.ContainerError as e:
-                return SandboxResult(
-                    success=False,
-                    output="",
-                    error=f"Container error: {e.stderr.decode('utf-8')}"
-                )
-            except Exception as e:
-                return SandboxResult(
-                    success=False,
-                    output="",
-                    error=f"Execution error: {str(e)}"
-                )
 
 @lilypad.trace()
-@llm.call(provider="openai", model="gpt-4o-mini")
-def generate_sandbox_code(task_description: str, available_data: str = "None") -> str:
-    return f"""
-    Generate Python code to complete this task: {task_description}
-    
-    Requirements:
-    - Complete, executable Python script
-    - Use only standard library and: pandas, numpy, matplotlib
-    - No file system access outside current directory
-    - No network requests
-    - Include error handling
-    - Print results clearly
-    
-    Task: {task_description}
-    Available data: {available_data}
-    """
+@anthropic.call("claude-3-5-sonnet-20241022")
+@prompt_template("""
+Generate Python code to analyze this sales data: {sales_data}
 
-class CodeAgentWorkflow:
+Your code should:
+1. Calculate comprehensive statistics (average, max, min, standard deviation)
+2. Identify trends and patterns in the data
+3. Calculate month-over-month growth rates
+4. Provide insights and recommendations
+5. Print clear, formatted results
+
+Write complete, executable Python code that handles all analysis in one script.
+""")
+def generate_analysis_code(sales_data: List[float]) -> str:
+    pass
+
+class SandboxedCodeAgent:
     def __init__(self):
-        self.sandbox = SecureCodeSandbox()
-        self.max_retries = 2
+        # E2B sandbox automatically handles isolation and cleanup
+        self.sandbox = None
     
     @lilypad.trace()
-    def execute_task(self, task_description: str, context: Dict[str, Any] = None) -> str:
-        """Execute a task using sandboxed code generation"""
+    def analyze_data(self, sales_data: List[float]) -> str:
+        """Execute complete data analysis using sandboxed code generation"""
         
-        # Prepare context information
-        available_data = json.dumps(context) if context else "None"
+        # Generate comprehensive analysis code
+        analysis_code = generate_analysis_code(sales_data)
         
-        for attempt in range(self.max_retries + 1):
-            print(f"\n=== Attempt {attempt + 1} ===")
+        # Execute safely in E2B sandbox
+        with Sandbox() as sbx:  # Automatically manages sandbox lifecycle
+            # Provide data to the sandbox
+            data_setup = f"""
+import json
+sales_data = {sales_data}
+months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul']
+print("Data loaded successfully")
+print(f"Sales data: {{sales_data}}")
+"""
             
-            # Generate code
-            code = generate_sandbox_code(task_description, available_data)
-            print(f"Generated code:\n{code}")
+            # Set up the data
+            setup_result = sbx.run_code(data_setup)
+            print(f"Setup: {setup_result.logs}")
             
-            # Execute safely in sandbox
-            result = self.sandbox.execute_code_safely(code)
+            # Run the analysis
+            execution_result = sbx.run_code(analysis_code)
             
-            if result.success:
-                print(f"✅ Execution successful")
-                print(f"Output: {result.output}")
-                return result.output
-            else:
-                print(f"❌ Execution failed: {result.error}")
-                
-                if attempt < self.max_retries:
-                    # Could use error feedback to improve code generation
-                    print("Retrying with error feedback...")
-                else:
-                    return f"Failed to complete task after {self.max_retries + 1} attempts. Last error: {result.error}"
-        
-        return "Task execution failed"
+            if execution_result.error:
+                return f"Analysis failed: {execution_result.error}"
+            
+            return execution_result.logs
 
-# Advanced: Persistent sandbox with state management
-class StatefulCodeSandbox(SecureCodeSandbox):
+# Comparison with tool-calling approach
+def compare_analysis_approaches():
+    """Compare tool-calling agent vs sandboxed code agent"""
+    
+    sample_data = [100, 150, 200, 180, 220, 190, 250]
+    
+    print("=== TOOL-CALLING AGENT ===")
+    print("Multiple LLM calls required:")
+    print("1. Call LLM to decide which tool to use first")
+    print("2. Call calculate_average() tool")
+    print("3. Call LLM to decide next step")
+    print("4. Call find_max_value() tool")
+    print("5. Call LLM for growth rate calculation strategy")
+    print("6. Multiple calls to calculate_growth_rate() tool")
+    print("7. Call LLM to synthesize final analysis")
+    print("Result: 7+ LLM calls, limited by predefined tools")
+    
+    print("\n=== SANDBOXED CODE AGENT ===")
+    agent = SandboxedCodeAgent()
+    
+    print("Single LLM call generates complete analysis:")
+    result = agent.analyze_data(sample_data)
+    print("Analysis Result:")
+    print(result)
+
+# Advanced: Multi-step workflow with persistent state
+class PersistentSandboxAgent:
     def __init__(self):
-        super().__init__()
-        self.persistent_container = None
-        self.session_state = {}
+        self.sandbox = Sandbox()  # Keep sandbox alive for session
     
-    def start_session(self) -> str:
-        """Start a persistent container for multi-step workflows"""
-        try:
-            self.persistent_container = self.client.containers.run(
-                self.base_image,
-                command="tail -f /dev/null",  # Keep container running
-                detach=True,
-                **self.container_limits
-            )
-            return f"Session started: {self.persistent_container.id[:12]}"
-        except Exception as e:
-            return f"Failed to start session: {e}"
-    
-    def execute_in_session(self, code: str) -> SandboxResult:
-        """Execute code in persistent container maintaining state"""
-        if not self.persistent_container:
-            return SandboxResult(False, "", "No active session")
+    @lilypad.trace()
+    def execute_workflow(self, tasks: List[str], initial_data: Dict[str, Any]) -> List[str]:
+        """Execute multiple related tasks maintaining state between steps"""
         
-        try:
-            # Execute code in running container
-            exec_result = self.persistent_container.exec_run(
-                f"python -c '{code}'",
-                stdout=True,
-                stderr=True
-            )
-            
-            output = exec_result.output.decode('utf-8')
-            
-            return SandboxResult(
-                success=exec_result.exit_code == 0,
-                output=output,
-                error=None if exec_result.exit_code == 0 else output
-            )
-            
-        except Exception as e:
-            return SandboxResult(False, "", f"Session execution error: {e}")
-    
-    def end_session(self):
-        """Clean up persistent container"""
-        if self.persistent_container:
-            self.persistent_container.stop()
-            self.persistent_container.remove()
-            self.persistent_container = None
+        # Set up initial data in sandbox
+        setup_code = f"""
+import pandas as pd
+import numpy as np
+import json
+from typing import Dict, Any
 
-# Example usage demonstrating secure code agents
-def demo_sandboxed_code_agents():
-    agent = CodeAgentWorkflow()
+# Load initial data
+data = {json.dumps(initial_data)}
+print("Workflow initialized with data:", list(data.keys()))
+
+# Helper functions for workflow
+def save_result(step_name: str, result: Any):
+    globals()[f'step_{step_name}_result'] = result
+    print(f"Saved result for step: {step_name}")
+
+def get_previous_result(step_name: str):
+    return globals().get(f'step_{step_name}_result', None)
+"""
+        
+        setup_result = self.sandbox.run_code(setup_code)
+        print(f"Workflow setup: {setup_result.logs}")
+        
+        results = []
+        
+        for i, task in enumerate(tasks):
+            # Generate code for this specific task
+            task_code = self._generate_task_code(task, i)
+            
+            # Execute in persistent sandbox (maintains state)
+            execution = self.sandbox.run_code(task_code)
+            
+            if execution.error:
+                results.append(f"Task {i+1} failed: {execution.error}")
+            else:
+                results.append(execution.logs)
+        
+        return results
     
-    # Example: Data analysis task
+    @anthropic.call("claude-3-5-sonnet-20241022")
+    @prompt_template("""
+    Generate Python code for step {step_number} of a multi-step analysis workflow.
+    
+    Task: {task}
+    
+    You can use:
+    - The 'data' variable (contains initial dataset)
+    - save_result(step_name, result) to save results for later steps
+    - get_previous_result(step_name) to access results from previous steps
+    
+    Generate complete code that:
+    1. Performs the requested analysis
+    2. Saves key results for future steps
+    3. Prints clear output
+    """)
+    def _generate_task_code(self, task: str, step_number: int) -> str:
+        pass
+    
+    def cleanup(self):
+        """Clean up the sandbox when done"""
+        if self.sandbox:
+            # E2B handles cleanup automatically, but you can explicitly close
+            pass
+
+# Example usage
+def demo_persistent_workflow():
+    agent = PersistentSandboxAgent()
+    
     sample_data = {
-        "sales_data": [100, 150, 200, 180, 220, 190, 250],
-        "months": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"]
+        "sales_data": [100, 150, 200, 180, 220, 190, 250, 280, 300],
+        "months": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"],
+        "regions": ["North", "South", "East", "West", "Central"]
     }
     
-    tasks = [
-        "Calculate the average sales and identify the month with highest sales",
-        "Create a simple trend analysis showing growth rate month-over-month",
-        "Generate a basic statistical summary of the sales data"
+    workflow_tasks = [
+        "Perform comprehensive statistical analysis of sales data",
+        "Identify seasonal patterns and trends using the statistical results",
+        "Create forecasting model based on identified patterns",
+        "Generate executive summary with actionable recommendations"
     ]
     
-    for task in tasks:
-        print(f"\n{'='*60}")
-        print(f"Task: {task}")
-        print('='*60)
-        
-        result = agent.execute_task(task, sample_data)
-        print(f"Final Result: {result}")
-
-# Performance comparison
-def compare_approaches():
-    """Compare tool-calling vs code agent approaches"""
-    print("=== PERFORMANCE COMPARISON ===")
-    print("Tool-calling approach:")
-    print("  - 5+ LLM calls for complex tasks")
-    print("  - High latency (multiple round trips)")
-    print("  - Limited by available tools")
-    print("  - Expensive token usage")
+    print("=== MULTI-STEP SANDBOXED WORKFLOW ===")
+    results = agent.execute_workflow(workflow_tasks, sample_data)
     
-    print("\nSandboxed code agent:")
-    print("  - 1 LLM call for code generation")
-    print("  - Low latency (single round trip)")
-    print("  - Full programming language flexibility")
-    print("  - Secure execution environment")
-    print("  - Cost-effective for complex workflows")
+    for i, result in enumerate(results):
+        print(f"\n--- Step {i+1} Result ---")
+        print(result)
+    
+    agent.cleanup()
 
 if __name__ == "__main__":
-    print("🚨 Note: This demo requires Docker to be installed and running")
-    print("Simulating sandboxed execution...")
+    print("🔒 Using E2B sandboxed execution - safe and secure!")
     
-    # Simulate the demo without actual Docker
-    compare_approaches()
+    # Simple comparison
+    compare_analysis_approaches()
     
-    # In real usage with Docker:
-    # demo_sandboxed_code_agents()
+    # Advanced workflow
+    print("\n" + "="*60)
+    demo_persistent_workflow()
 ```
 
 **Why this approach works better:**
 
-- **Security Through Isolation:** Docker containers prevent AI code from accessing host system resources
-- **Performance Advantage:** Single code generation call replaces multiple tool-calling round trips
-- **Enhanced Capability:** Full programming language access enables complex logic and state management
+- **Complete Flexibility:** AI can write custom logic using the full Python ecosystem instead of being limited to predefined tools
+- **Single Round Trip:** One LLM call generates complete analysis vs multiple calls for each tool operation
+- **Safe Execution:** E2B sandboxes isolate code execution from your host system while providing full programming capabilities
 
 ### The Takeaway
 
-Sandboxed code agents combine the flexibility of full programming environments with security through containerization, enabling fast and capable AI automation without system risks. This pattern unlocks advanced AI workflows while maintaining safety.
+Sandboxed code agents with E2B give you the best of both worlds: the unlimited flexibility of letting AI write custom code and the safety of isolated execution. This pattern replaces rigid tool-calling workflows with intelligent code generation that can solve complex problems in one shot.
 
 ---
 *Part of the "Effective AI Engineering" series - practical tips for building better applications with AI components.*
