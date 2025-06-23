@@ -1,6 +1,6 @@
 ## Effective AI Engineering #28: Input Guardrails
 
-It's 2 AM. The twitter screenshot open in one tab. 50,000 logs of malicius requests in the other.
+It's 2 AM. The twitter screenshot open in one tab. 50,000 logs of malicious requests in the other.
 How did they get my AI chatbot to generate harmful content? And why did they have to post it on twitter?
 You try to open your eyes bigger as if that would somehow make the problem reveal itself.
 You thought your prompt would prevent this.
