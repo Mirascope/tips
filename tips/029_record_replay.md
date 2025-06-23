@@ -42,7 +42,7 @@ result = process_customer_message("I can't access my billing information")
 - **Expensive Debugging:** Each debug attempt consumes tokens and may not hit the problematic path
 - **Lost Context:** Intermediate states and responses that caused the failure are gone forever
 
-### The Solution: LLM Cassette Recording
+### The Solution: Record / Replay Calls
 
 A better approach is to record LLM interactions to "cassettes" that can be replayed exactly, similar to how VCRpy works for HTTP requests. This pattern captures problematic responses and lets you debug them repeatedly without making new API calls.
 You can even manually _edit_ the saved "cassettes" to provide the exact output you're looking for!
