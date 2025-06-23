@@ -49,10 +49,6 @@ for chunk, _ in stream:
 
 # Access complete response after streaming
 print(f"\n\nContent: {stream.content}")
-
-# Get usage statistics
-call_response = stream.construct_call_response()
-print(f"Usage: {call_response.usage}")
 ```
 
 **Why this approach works better:**
