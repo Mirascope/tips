@@ -1,8 +1,11 @@
 ## Effective AI Engineering #34: Gleaning
 
-**Ever copy a bad AI response into ChatGPT and ask "How would you fix this?"** Then you take that feedback, go back to your original prompt, and make the exact changes ChatGPT suggested. What if the AI just did that refinement loop itself?
+You’ve seen it before: your AI delivers that 'almost there' draft.
+That sinking feeling when you realize you're still on cleanup duty, manually tweaking and re-prompting, just to get it production-ready. It's frustrating, right?
+You got into AI to build amazing things, not to babysit endless 'first drafts.'  Many engineers find themselves stuck in this loop, making single AI calls and crossing their fingers. But when responses don't hit the mark, you're back to square one, manually refining what the AI couldn't quite nail. This isn't just inefficient; it means your AI isn't truly learning or improving, and you're missing out on real innovation.
 
-Most developers treat AI responses as one-shot attempts—if it's wrong, start over from scratch. But the best responses often come from iterative refinement, where the AI learns from its own mistakes and progressively improves its output.
+Imagine an AI that learns from its mistakes.
+An AI that doesn’t just generate a response, but refines it. Iteratively. Until it meets your exact standards.
 
 ### The Problem
 
@@ -10,12 +13,11 @@ Many developers make single AI calls and hope for the best, starting over comple
 
 ```python
 # BEFORE: Single attempt with no refinement
-from mirascope.core import anthropic, prompt_template
+from mirascope import llm, prompt_template
 
-@anthropic.call("claude-3-5-sonnet-20241022")
+@llm.call(provider="anthropic", model="claude-3-5-sonnet-20241022")
 @prompt_template("Write a professional email to decline a job offer for: {position}")
-def decline_job_offer(position: str) -> str:
-    pass
+def decline_job_offer(position): ...
 
 # One shot, no refinement opportunity
 response = decline_job_offer("Senior Software Engineer")
@@ -34,77 +36,65 @@ A better approach is to let the AI refine its own responses iteratively. This gl
 
 ```python
 # AFTER: Iterative refinement through gleaning
-from mirascope.core import anthropic, prompt_template
+from mirascope import llm, prompt_template
+from pydantic import BaseModel
 
-@anthropic.call("claude-3-5-sonnet-20241022")
+class FeedbackResult(BaseModel):
+    feedback: str
+    needs_improvement: bool
+
+@llm.call(provider="anthropic", model="claude-3-5-sonnet-20241022")
+@prompt_template("Write a professional email to decline a job offer for: {position}")
+def generate_response(position: str): ...
+
+@llm.call(
+    provider="anthropic", 
+    model="claude-3-5-sonnet-20241022",
+    response_model=FeedbackResult
+)
 @prompt_template("""
-Answer: {query}
+Evaluate this response and provide feedback:
 
-{% if prev_response %}
-<previous>{prev_response}</previous>
-{% endif %}
-
-{% if feedback %}
-<feedback>{feedback}</feedback>
-
-Please revise your previous response based on this feedback.
-{% endif %}
-""")
-def answer_with_refinement(
-    query: str, 
-    *, 
-    prev_response: str | None = None, 
-    feedback: str | None = None
-) -> str:
-    pass
-
-@anthropic.call("claude-3-5-sonnet-20241022")
-@prompt_template("""
-Please provide feedback on whether this response adequately answers the question.
-
-Question: {query}
-
+Query: {query}
 Response: {response}
 
-Identify specific areas for improvement and suggest concrete changes.
+Return your assessment with specific improvement suggestions.
 """)
-def generate_feedback(query: str, response: str) -> str:
-    pass
+def evaluate_response(query: str, response: str): ...
 
-def gleaning_process(query: str, max_iterations: int = 3) -> str:
-    """Iteratively refine response using self-generated feedback"""
+@llm.call(provider="anthropic", model="claude-3-5-sonnet-20241022")
+@prompt_template("""
+Improve this response based on the feedback:
+
+Original query: {query}
+Previous response: {response}
+Feedback: {feedback}
+
+Provide a revised version.
+""")
+def refine_response(query: str, response: str, feedback: str): ...
+
+def gleaning_query(position: str, max_iterations: int = 3):
+    """Higher-order function that adds gleaning to any AI function"""
+    current_response = generate_response(position)
     
-    # Generate initial response
-    current_response = answer_with_refinement(query)
-    print(f"Initial response: {current_response[:100]}...")
-    
-    for iteration in range(max_iterations):
-        # Generate feedback on current response
-        feedback = generate_feedback(query, current_response)
-        print(f"\nIteration {iteration + 1} feedback: {feedback[:100]}...")
+    for i in range(max_iterations):
+        evaluation = evaluate_response(position, current_response.content)
         
-        # Check if feedback indicates satisfaction
-        if "excellent" in feedback.lower() or "no improvements" in feedback.lower():
-            print(f"Refinement complete after {iteration + 1} iterations")
+        if not evaluation.needs_improvement:
             return current_response
-        
-        # Refine response based on feedback
-        refined_response = answer_with_refinement(
-            query,
-            prev_response=current_response,
-            feedback=feedback
+            
+        current_response = refine_response(
+            position, current_response.content, evaluation.feedback
         )
-        
-        print(f"Refined response: {refined_response[:100]}...")
-        current_response = refined_response
     
     return current_response
 
 # Example usage
-query = "Write a professional email declining a Senior Software Engineer position"
-final_response = gleaning_process(query, max_iterations=2)
+position = "Senior Software Engineer"
+final_response = gleaning(generate_response, position, max_iterations=2)
 
-print(f"\nFinal response:\n{final_response}")
+print(f"Final response:\n{final_response}")
 ```
 
 **Why this approach works better:**
