@@ -59,7 +59,7 @@ def validate_response(content: str) -> str:
     return content
 
 
-@anthropic.call("claude-3-5-sonnet-20241022", response_model=Annotated[str, AfterValidator(validate_response)])
+@llm.call(provider="anthropic", model="claude-3-5-sonnet-20241022", response_model=Annotated[str, AfterValidator(validate_response)])
 @prompt_template("Answer this customer question: {question}")
 def validated_answer(question: str): ...
 

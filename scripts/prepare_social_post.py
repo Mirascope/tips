@@ -114,8 +114,9 @@ def prepare_social_post(markdown_file: str, output_dir: str, theme: str = "VSCod
     
     # Generate code images
     images_dir = os.path.join(output_dir, "images")
-    print(f"Generating code images...")
-    image_paths = process_code_blocks_from_file(markdown_file, images_dir, theme)
+    # print(f"Generating code images...")
+    # image_paths = process_code_blocks_from_file(markdown_file, images_dir, theme)
+    image_paths = {}
     
     # Format content for LinkedIn, removing title and starting with hook
     linkedin_content = post_data["clean_content"]
