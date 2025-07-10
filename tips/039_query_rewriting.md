@@ -1,6 +1,6 @@
 ## Effective AI Engineering #039: Query Rewriting for RAG
 
-**Are your RAG systems failing on perfectly reasonable questions?** Users ask broad, vague, or contextual questions that embeddings just can't handle effectively.
+**Why does your RAG system return docs about "database optimization" when users ask about "my app is slow"?** Embedding similarity search breaks down when user language doesn't match your documentation's technical vocabulary.
 
 This creates a frustrating user experience where your RAG system works great for precise technical queries but falls apart when users ask natural, conversational questions. The gap between how users think and how embeddings search becomes your system's biggest weakness.
 
