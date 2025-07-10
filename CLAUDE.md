@@ -1,6 +1,32 @@
-# CLAUDE.md - Guide for Generating Effective AI Engineering Tips
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+# Guide for Generating Effective AI Engineering Tips
 
 This guide provides instructions for generating high-quality tips in the "Effective AI Engineering" series. Follow these patterns and principles to maintain consistency and quality across all tips.
+
+## Repository Architecture
+
+This repository contains the "Effective AI Engineering" tips series - a collection of practical engineering advice for building better AI applications. The codebase is organized around:
+
+- **tips/**: Markdown files containing individual tips (numbered 001-037+)
+- **examples/**: Working Python code examples that demonstrate the concepts
+- **scripts/**: Automation tools for preparing social media posts
+- **output/**: Generated social media content (Twitter, LinkedIn posts and images)
+
+### Key Dependencies and Patterns
+
+- **Mirascope**: Primary framework for AI function definitions using `@anthropic.call()` and `@prompt_template()` decorators
+- **Lilypad**: Observability framework using `@lilypad.trace()` for instrumentation
+- **Pydantic**: Data validation and structured outputs
+- **Default Model**: GPT-4o-mini (`gpt-4o-mini`)
+
+### Development Workflow
+
+1. **uv**: Package management - use `uv run` for script execution
+2. **Code Validation**: Always test code examples by running them with `uv run examples/tipXXX.py`
+3. **Social Media Generation**: Use `uv run scripts/prepare_social_post.py` to process tips for social platforms
 
 ## Core Writing Principles
 
@@ -71,25 +97,26 @@ A better approach is to [1-2 sentences introducing solution]. This [pattern/tech
 - Include comments explaining key differences
 
 ### 2. Mirascope Integration (When Applicable)
-Use mirascope consistently for AI function definitions:
+Use mirascope consistently for AI function definitions. **Important**: The actual codebase uses `mirascope.llm.call()` and `mirascope.prompt_template()` decorators, not `mirascope.core`. Follow these patterns:
+- **No return type annotations**: Use `response_model=` parameter instead of function return type
+- **Use ellipsis**: Replace `pass` with `...` on the same line as the function definition
+- **Default provider/model**: Use `provider='openai'` and `model='gpt-4o-mini'`
 
 ```python
-from mirascope.core import anthropic, prompt_template
+from mirascope import llm, prompt_template
 from pydantic import BaseModel
 
-@anthropic.call("claude-3-5-sonnet-20241022")
+@llm.call(provider='openai', model='gpt-4o-mini')
 @prompt_template("Your prompt here")
-def ai_function() -> str:
-    pass
+def ai_function(): ...
 
 # For structured outputs:
 class OutputModel(BaseModel):
     field: str
 
-@anthropic.call("claude-3-5-sonnet-20241022", response_model=OutputModel)
+@llm.call(provider='openai', model='gpt-4o-mini', response_model=OutputModel)
 @prompt_template("Your prompt here")
-def structured_ai_function() -> OutputModel:
-    pass
+def structured_ai_function(): ...
 ```
 
 ### 3. Lilypad Integration (When Tracing Matters)
@@ -99,16 +126,15 @@ Use lilypad for observability and evaluation:
 import lilypad
 
 @lilypad.trace()
-@anthropic.call("claude-3-5-sonnet-20241022")
+@llm.call(provider='openai', model='gpt-4o-mini')
 @prompt_template("Your prompt here")
-def traced_function() -> str:
-    pass
+def traced_function(): ...
 
 # For evaluation workflows:
 @lilypad.trace()
 def evaluate_responses():
     # Show annotation and metric computation
-    pass
+    ...
 ```
 
 ## Technical Guidelines
@@ -116,7 +142,7 @@ def evaluate_responses():
 ### 1. Framework Usage
 - **Primary:** Use mirascope for AI function definitions
 - **Observability:** Use lilypad when tracing/evaluation is relevant to the tip
-- **Models:** Default to Claude 3.5 Sonnet unless specific model requirements exist
+- **Models:** Default to GPT-4o-mini unless specific model requirements exist
 - **Validation:** Use Pydantic models for structured outputs
 
 ### 2. Code Quality Standards
@@ -191,3 +217,57 @@ Before finalizing a tip, verify:
 - **Incomplete solutions:** Ensure code examples are runnable and complete
 - **Abstract advice:** Focus on concrete, actionable recommendations
 - **Inconsistent structure:** Follow the template format exactly for each tip
+
+## Essential Development Commands
+
+### Code Testing and Validation
+```bash
+# Test individual tip examples
+uv run examples/tip001.py
+
+# Run all examples to validate they work
+find examples/ -name "*.py" -exec uv run {} \;
+```
+
+### Social Media Content Generation
+```bash
+# Generate social media posts for a tip
+uv run scripts/prepare_social_post.py tips/001_bulkhead.md --output output/tip001
+
+# Setup dependencies for social media automation
+bash scripts/setup.sh
+```
+
+### Package Management
+```bash
+# Install dependencies
+uv install
+
+# Add new dependencies
+uv add <package-name>
+
+# Run scripts with uv
+uv run <script-path>
+```
+
+## Critical Implementation Notes
+
+### Code Example Validation
+**MANDATORY**: Always validate code examples by running them before including in tips. Use `uv run examples/tipXXX.py` to ensure examples work correctly.
+
+### Marketing Style & Audience
+- **Target Audience**: Senior engineers and AI practitioners who have felt specific pain points
+- **Tone**: Authoritative yet approachable, drawing from "decades of experience"
+- **Hook Requirements**: Must start with a compelling question that identifies with real developer pain
+- **Simplicity**: Make examples as minimal as possible while remaining realistic
+
+### Framework Integration Patterns
+- **Mirascope**: Use `@llm.call()` and `@prompt_template()` decorators (not `@anthropic.call()`)
+- **Lilypad**: Apply `@lilypad.trace()` for observability examples
+- **Structure**: Always show BEFORE/AFTER code patterns
+
+### Code Quality Standards
+- Examples must be production-ready and complete
+- Include proper imports and error handling
+- Test every code snippet before publication
+- Focus on practical, battle-tested approaches over experimental ones
