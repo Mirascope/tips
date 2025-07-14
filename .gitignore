@@ -180,3 +180,6 @@ cython_debug/
 .specstory/.what-is-this.md
 
 **/.claude/settings.local.json
+
+tip_summaries/
+tips_metadata.csv

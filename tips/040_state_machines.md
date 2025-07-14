@@ -2,8 +2,8 @@
 tip_number: 40
 tip_name: "Graph-Based Agent Workflows"
 categories: ["workflow", "architecture", "error-handling"]
-x_link: ""
-linkedin_link: ""
+x_link: "https://x.com/skylar_b_payne/status/1944819294962946217"
+linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_effective-ai-engineering-40-graph-based-activity-7350585217792860160-9NUE?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
 ---
 
 ## Effective AI Engineering #040: Graph-Based Agent Workflows
