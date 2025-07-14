@@ -2,7 +2,7 @@
 tip_number: 36
 tip_name: "Human Approval for Risky Tools"
 categories: ["security", "workflow", "user-experience"]
-x_link: ""
+x_link: "https://x.com/skylar_b_payne/status/1942644972236271862"
 linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_3-am-slack-notifications-exploding-your-activity-7348410898111250444-ivin?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
 ---
 

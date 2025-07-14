@@ -2,7 +2,7 @@
 tip_number: 6
 tip_name: "Isolate & Evaluate Your RAG Retriever"
 categories: ["evaluation", "retrieval", "debugging"]
-x_link: ""
+x_link: "https://x.com/skylar_b_payne/status/1920176661233811726"
 linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_are-your-rag-responses-inaccurate-despite-activity-7325941613128527875-h-jL?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
 ---
 

@@ -2,7 +2,7 @@
 tip_number: 31
 tip_name: "Streaming Responses"
 categories: ["user-experience", "performance", "integration"]
-x_link: ""
+x_link: "https://x.com/skylar_b_payne/status/1940108268942069792"
 linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_users-leave-after-3-seconds-your-ai-takes-activity-7345874176194277377-FVpE?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
 ---
 

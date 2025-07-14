@@ -2,7 +2,7 @@
 tip_number: 35
 tip_name: "Logit Bias"
 categories: ["prompt-engineering", "output-validation", "quality-assurance"]
-x_link: ""
+x_link: "https://x.com/skylar_b_payne/status/1942282575797440704"
 linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_everyone-says-my-writing-sounds-like-ai-activity-7348048526045593601-TsHx?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
 ---
 

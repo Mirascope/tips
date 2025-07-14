@@ -2,7 +2,7 @@
 tip_number: 14
 tip_name: "Error Reinsertion for Smarter LLM Retries"
 categories: ["error-handling", "cost-control", "prompt-engineering"]
-x_link: ""
+x_link: "https://x.com/skylar_b_payne/status/1924525642327916666"
 linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_tired-of-your-llm-just-repeating-the-same-activity-7330291562926456832-Vz_U?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
 ---
 

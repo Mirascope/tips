@@ -2,7 +2,7 @@
 tip_number: 38
 tip_name: "Attribute-First Data Generation"
 categories: ["prompt-engineering", "quality-assurance", "user-experience"]
-x_link: ""
+x_link: "https://x.com/skylar_b_payne/status/1943369751545188453"
 linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_effective-ai-engineering-38-attribute-first-activity-7349135712916598786-efTH?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
 ---
 

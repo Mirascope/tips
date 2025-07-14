@@ -2,7 +2,7 @@
 tip_number: 13
 tip_name: "Pure Pipelines - Stop Your AI System From Traumatizing Real Users During Testing"
 categories: ["testing", "architecture", "evaluation"]
-x_link: ""
+x_link: "https://x.com/skylar_b_payne/status/1923438424670801997"
 linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_youre-scared-to-test-your-ai-what-if-activity-7329204368811913218-P9gW?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
 ---
 

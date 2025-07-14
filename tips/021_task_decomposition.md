@@ -2,7 +2,7 @@
 tip_number: 21
 tip_name: "Break Complex Tasks into Evaluable Components"
 categories: ["workflow", "architecture", "prompt-engineering"]
-x_link: ""
+x_link: "https://x.com/skylar_b_payne/status/1928511866382274816"
 linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_youre-asking-the-ai-to-do-too-much-at-once-activity-7334277814331842561-2BiF?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
 ---
 

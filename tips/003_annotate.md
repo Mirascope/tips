@@ -2,7 +2,7 @@
 tip_number: 3
 tip_name: "Don't Just Log, Annotate! Turn Data into Understanding"
 categories: ["evaluation", "monitoring", "iteration"]
-x_link: ""
+x_link: "https://x.com/skylar_b_payne/status/1918364219847672165"
 linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_is-your-ai-system-generating-logs-without-activity-7324129427204812800-nDQz?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
 ---
 

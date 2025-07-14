@@ -2,7 +2,7 @@
 tip_number: 15
 tip_name: "Temperature Warming for Reliable LLM Responses"
 categories: ["error-handling", "prompt-engineering", "quality-assurance"]
-x_link: ""
+x_link: "https://x.com/skylar_b_payne/status/1924887973356536061"
 linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_are-you-tired-of-your-llms-getting-stuck-activity-7330653907775336449-dkZm?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
 ---
 

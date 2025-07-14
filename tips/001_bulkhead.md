@@ -2,7 +2,7 @@
 tip_number: 1
 tip_name: "Build Bulkheads Around Your AI Calls"
 categories: ["architecture", "error-handling", "integration"]
-x_link: ""
+x_link: "https://x.com/skylar_b_payne/status/1917639950633255072"
 linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_effective-ai-tip-1-build-bulkheads-around-activity-7323404898300010496-pxTL?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
 ---
 

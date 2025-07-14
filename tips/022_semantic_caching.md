@@ -2,7 +2,7 @@
 tip_number: 22
 tip_name: "Semantic Caching"
 categories: ["cost-control", "performance", "user-experience"]
-x_link: ""
+x_link: "https://x.com/skylar_b_payne/status/1933223068844896708"
 linkedin_link: ""
 ---
 

@@ -2,7 +2,7 @@
 tip_number: 4
 tip_name: "Structure Your Outputs for Reliable Systems"
 categories: ["output-validation", "integration", "error-handling"]
-x_link: ""
+x_link: "https://x.com/skylar_b_payne/status/1919451139390451783"
 linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_are-your-llm-integrations-fragile-and-difficult-activity-7325216568555040768-jcs6?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
 ---
 

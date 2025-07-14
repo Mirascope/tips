@@ -2,7 +2,7 @@
 tip_number: 29
 tip_name: "Record and Replay"
 categories: ["testing", "debugging", "evaluation"]
-x_link: ""
+x_link: "https://x.com/skylar_b_payne/status/1937571563307405712"
 linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_3-hours-127-runs-2-half-empty-lattes-activity-7343337496522440705-Isb6?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
 ---
 

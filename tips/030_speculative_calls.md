@@ -2,7 +2,7 @@
 tip_number: 30
 tip_name: "Speculative Calls"
 categories: ["performance", "user-experience", "cost-control"]
-x_link: ""
+x_link: "https://x.com/skylar_b_payne/status/1939745848084009380"
 linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_when-youre-too-slow-quality-doesnt-activity-7345511807144386561-mQZV?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
 ---
 

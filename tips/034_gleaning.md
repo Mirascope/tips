@@ -2,7 +2,7 @@
 tip_number: 34
 tip_name: "Gleaning"
 categories: ["quality-assurance", "iteration", "prompt-engineering"]
-x_link: ""
+x_link: "https://x.com/skylar_b_payne/status/1941195439958540550"
 linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_going-back-and-forth-with-ai-is-time-consuming-activity-7346961348242685953-rP9a?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
 ---
 

@@ -2,7 +2,7 @@
 tip_number: 8
 tip_name: "Create Semantically Focused Chunks for RAG"
 categories: ["data-preparation", "retrieval", "quality-assurance"]
-x_link: ""
+x_link: "https://x.com/skylar_b_payne/status/1920912407825969529"
 linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_your-chunking-strategy-is-sabotaging-your-activity-7326666186404880384-IK2b?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
 ---
 

@@ -2,7 +2,7 @@
 tip_number: 9
 tip_name: "Hybrid Search for Better RAG"
 categories: ["retrieval", "performance", "quality-assurance"]
-x_link: ""
+x_link: "https://x.com/skylar_b_payne/status/1921988848386523145"
 linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_are-you-struggling-with-rag-systems-that-activity-7327754797317566465-_1F2?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
 ---
 

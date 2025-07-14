@@ -2,7 +2,7 @@
 tip_number: 33
 tip_name: "Semantic Validators"
 categories: ["output-validation", "quality-assurance", "error-handling"]
-x_link: ""
+x_link: "https://x.com/skylar_b_payne/status/1940833002361159983"
 linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_users-no-feedback-just-churn-the-only-activity-7346598941485883392-RxzQ?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
 ---
 

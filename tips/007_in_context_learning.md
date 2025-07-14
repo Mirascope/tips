@@ -2,7 +2,7 @@
 tip_number: 7
 tip_name: "Show, Don't Just Tell - Use In-Context Learning"
 categories: ["prompt-engineering", "quality-assurance", "output-validation"]
-x_link: ""
+x_link: "https://x.com/skylar_b_payne/status/1920539085745135938"
 linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_are-you-getting-unpredictable-or-poorly-formatted-activity-7326305275076820992-S1xJ?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
 ---
 

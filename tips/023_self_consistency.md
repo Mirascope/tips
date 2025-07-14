@@ -2,7 +2,7 @@
 tip_number: 23
 tip_name: "Self-Consistency Prompting"
 categories: ["quality-assurance", "prompt-engineering", "error-handling"]
-x_link: ""
+x_link: "https://x.com/skylar_b_payne/status/1933585274728047087"
 linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_that-awful-moment-your-ai-demo-just-gave-activity-7339351233821851648-YoTG?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
 ---
 

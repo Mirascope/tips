@@ -2,7 +2,7 @@
 tip_number: 25
 tip_name: "Ranking Boosting"
 categories: ["retrieval", "quality-assurance", "user-experience"]
-x_link: ""
+x_link: "https://x.com/skylar_b_payne/status/1935397254392598948"
 linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_customer-complaints-kept-piling-up-api-activity-7341163183103004672-5-HN?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
 ---
 

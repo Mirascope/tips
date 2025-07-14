@@ -2,7 +2,7 @@
 tip_number: 16
 tip_name: "Model Escalation for Cost-Effective LLM Reliability"
 categories: ["cost-control", "error-handling", "performance"]
-x_link: ""
+x_link: "https://x.com/skylar_b_payne/status/1925612760634658868"
 linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_bigger-models-are-expensive-smaller-models-activity-7331378698719227905-6ANw?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
 ---
 

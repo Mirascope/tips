@@ -2,7 +2,7 @@
 tip_number: 32
 tip_name: "PII Masking"
 categories: ["privacy", "security", "data-preparation"]
-x_link: ""
+x_link: "https://x.com/skylar_b_payne/status/1940470623567786065"
 linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_ai-knows-your-name-ai-knows-your-users-activity-7346236554832490499-1FVT?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
 ---
 

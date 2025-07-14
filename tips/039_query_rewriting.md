@@ -2,7 +2,7 @@
 tip_number: 39
 tip_name: "Query Rewriting for RAG"
 categories: ["retrieval", "user-experience", "quality-assurance"]
-x_link: ""
+x_link: "https://x.com/skylar_b_payne/status/1943732130799816902"
 linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_effective-ai-engineering-39-query-rewriting-activity-7349498083807793152-M-oK?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
 ---
 

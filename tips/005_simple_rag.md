@@ -2,7 +2,7 @@
 tip_number: 5
 tip_name: "Give Your LLM Context - Simple RAG with BM25"
 categories: ["retrieval", "data-preparation", "quality-assurance"]
-x_link: ""
+x_link: "https://x.com/skylar_b_payne/status/1919817057996050692"
 linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_is-your-llm-giving-irrelevant-or-outdated-activity-7325581478631718912-QbQk?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
 ---
 

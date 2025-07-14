@@ -2,7 +2,7 @@
 tip_number: 26
 tip_name: "Output Guardrails"
 categories: ["output-validation", "security", "quality-assurance"]
-x_link: ""
+x_link: "https://x.com/skylar_b_payne/status/1935759613254656030"
 linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_legal-is-definitely-going-to-be-upset-your-activity-7341525568221278210-Gkkv?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
 ---
 

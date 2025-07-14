@@ -2,7 +2,7 @@
 tip_number: 10
 tip_name: "Refining RAG - Prioritize the Best Context with Reranking"
 categories: ["retrieval", "quality-assurance", "performance"]
-x_link: ""
+x_link: "https://x.com/skylar_b_payne/status/1922351237116125679"
 linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_worst-documents-coming-first-in-your-hybrid-activity-7328117170670899200-RLA5?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
 ---
 

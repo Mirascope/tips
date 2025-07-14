@@ -2,7 +2,7 @@
 tip_number: 2
 tip_name: "Instrument Your AI Calls - You Can't Improve What You Don't Measure"
 categories: ["monitoring", "debugging", "cost-control"]
-x_link: ""
+x_link: "https://x.com/skylar_b_payne/status/1918002326310109549"
 linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_why-the-does-my-ai-system-return-that-activity-7323768517051256832-bmkx?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
 ---
 

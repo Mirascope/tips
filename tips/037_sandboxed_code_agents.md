@@ -2,7 +2,7 @@
 tip_number: 37
 tip_name: "Sandboxed Code Agents"
 categories: ["security", "testing", "architecture"]
-x_link: ""
+x_link: "https://x.com/skylar_b_payne/status/1943007353424474204"
 linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_5-seconds-per-step-100-steps-this-agent-activity-7348773299218223105-rSpW?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
 ---
 
