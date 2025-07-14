@@ -1,3 +1,11 @@
+---
+tip_number: 2
+tip_name: "Instrument Your AI Calls - You Can't Improve What You Don't Measure"
+categories: ["monitoring", "debugging", "cost-control"]
+x_link: ""
+linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_why-the-does-my-ai-system-return-that-activity-7323768517051256832-bmkx?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
+---
+
 ## Effective AI Engineering: Instrument Your AI Calls - You Can't Improve What You Don't Measure
 
 **Is your AI system a mysterious black box?** When your AI returns unexpected responses or errors, you need to know why – not just that something went wrong.

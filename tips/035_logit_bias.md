@@ -1,3 +1,11 @@
+---
+tip_number: 35
+tip_name: "Logit Bias"
+categories: ["prompt-engineering", "output-validation", "quality-assurance"]
+x_link: ""
+linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_everyone-says-my-writing-sounds-like-ai-activity-7348048526045593601-TsHx?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
+---
+
 ## Effective AI Engineering #35: Logit Bias
 
 **"Everyone says my writing sounds like AI wrote it with all the em-dashes?"** That's because AI did write it—and those telltale punctuation patterns are dead giveaways.

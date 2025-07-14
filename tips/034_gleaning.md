@@ -1,3 +1,11 @@
+---
+tip_number: 34
+tip_name: "Gleaning"
+categories: ["quality-assurance", "iteration", "prompt-engineering"]
+x_link: ""
+linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_going-back-and-forth-with-ai-is-time-consuming-activity-7346961348242685953-rP9a?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
+---
+
 ## Effective AI Engineering #34: Gleaning
 
 You’ve seen it before: your AI delivers that 'almost there' draft.

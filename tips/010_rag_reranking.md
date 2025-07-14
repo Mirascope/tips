@@ -1,3 +1,11 @@
+---
+tip_number: 10
+tip_name: "Refining RAG - Prioritize the Best Context with Reranking"
+categories: ["retrieval", "quality-assurance", "performance"]
+x_link: ""
+linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_worst-documents-coming-first-in-your-hybrid-activity-7328117170670899200-RLA5?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
+---
+
 ## Effective AI Engineering #10: Refining RAG - Prioritize the Best Context with Reranking
 
 **Are you struggling with merging results from different retrieval methods?** Hybrid search (Tip #9) improves recall by combining results from multiple retrievers, but simply averaging scores fails to properly rank the final list.

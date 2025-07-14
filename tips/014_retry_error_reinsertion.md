@@ -1,3 +1,11 @@
+---
+tip_number: 14
+tip_name: "Error Reinsertion for Smarter LLM Retries"
+categories: ["error-handling", "cost-control", "prompt-engineering"]
+x_link: ""
+linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_tired-of-your-llm-just-repeating-the-same-activity-7330291562926456832-Vz_U?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
+---
+
 ## Effective AI Engineering #14: Error Reinsertion for Smarter LLM Retries
 
 **Tired of your LLM just repeating the same mistakes when retries fail?** Simple retry strategies just multiply costs without improving reliability when models fail in consistent ways.

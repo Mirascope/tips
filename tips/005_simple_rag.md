@@ -1,3 +1,11 @@
+---
+tip_number: 5
+tip_name: "Give Your LLM Context - Simple RAG with BM25"
+categories: ["retrieval", "data-preparation", "quality-assurance"]
+x_link: ""
+linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_is-your-llm-giving-irrelevant-or-outdated-activity-7325581478631718912-QbQk?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
+---
+
 ## Effective AI Engineering #5: Give Your LLM Context - Simple RAG with BM25
 
 **Is your LLM giving irrelevant or outdated answers?** When your AI assistant can't access your internal documents or recent information, it's severely limited in its ability to help.

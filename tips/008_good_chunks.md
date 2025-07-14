@@ -1,3 +1,11 @@
+---
+tip_number: 8
+tip_name: "Create Semantically Focused Chunks for RAG"
+categories: ["data-preparation", "retrieval", "quality-assurance"]
+x_link: ""
+linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_your-chunking-strategy-is-sabotaging-your-activity-7326666186404880384-IK2b?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
+---
+
 ## Effective AI Engineering #8: Create Semantically Focused Chunks for RAG
 
 **Are you getting poor relevance from your RAG system?** Your chunking strategy could be sabotaging your retrieval quality, even with the best embeddings and models.

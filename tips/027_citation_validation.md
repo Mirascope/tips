@@ -1,3 +1,11 @@
+---
+tip_number: 27
+tip_name: "Citation Validation"
+categories: ["output-validation", "retrieval", "quality-assurance"]
+x_link: ""
+linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_your-ai-is-making-stuff-up-again-another-activity-7341887930245808128-Yq5H?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
+---
+
 ## Effective AI Engineering #27: Citation Validation
 
 Your AI is making stuff up again. Another user complaint comes through. You let your face fall into your hands. Feeling the forehead wrinkles get deeper.

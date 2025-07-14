@@ -1,3 +1,11 @@
+---
+tip_number: 28
+tip_name: "Input Guardrails"
+categories: ["security", "input-validation", "error-handling"]
+x_link: ""
+linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_its-2-am-the-twitter-screenshot-open-activity-7342975115443286016-2ml6?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
+---
+
 ## Effective AI Engineering #28: Input Guardrails
 
 It's 2 AM. The twitter screenshot open in one tab. 50,000 logs of malicious requests in the other.

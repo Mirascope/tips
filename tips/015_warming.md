@@ -1,4 +1,12 @@
-## Effective AI Engineering #x15 Temperature Warming for Reliable LLM Responses
+---
+tip_number: 15
+tip_name: "Temperature Warming for Reliable LLM Responses"
+categories: ["error-handling", "prompt-engineering", "quality-assurance"]
+x_link: ""
+linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_are-you-tired-of-your-llms-getting-stuck-activity-7330653907775336449-dkZm?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
+---
+
+## Effective AI Engineering #15: Temperature Warming for Reliable LLM Responses
 
 **Are you tired of your LLMs getting stuck in failure patterns?** When your model repeatedly fails with the same error despite multiple retries, a standard retry mechanism just wastes compute and time.
 

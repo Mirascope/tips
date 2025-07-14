@@ -1,3 +1,11 @@
+---
+tip_number: 36
+tip_name: "Human Approval for Risky Tools"
+categories: ["security", "workflow", "user-experience"]
+x_link: ""
+linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_3-am-slack-notifications-exploding-your-activity-7348410898111250444-ivin?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
+---
+
 ## Effective AI Engineering #36: Human Approval for Risky Tools
 
 **3 AM. Slack notifications exploding. Your AI agent just wiped the entire user uploads folder.** You watch in horror as frantic messages pour in from customers who've lost years of files

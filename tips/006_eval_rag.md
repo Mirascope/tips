@@ -1,3 +1,11 @@
+---
+tip_number: 6
+tip_name: "Isolate & Evaluate Your RAG Retriever"
+categories: ["evaluation", "retrieval", "debugging"]
+x_link: ""
+linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_are-your-rag-responses-inaccurate-despite-activity-7325941613128527875-h-jL?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
+---
+
 ## Effective AI Engineering #6: Isolate & Evaluate Your RAG Retriever
 
 **Are your RAG responses inaccurate despite a strong LLM?** When your retrieval system fails to find the right documents, even the most powerful language model can't generate correct answers.

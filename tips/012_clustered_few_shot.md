@@ -1,3 +1,11 @@
+---
+tip_number: 12
+tip_name: "Balance Caching and Relevance with Clustered Few-Shot Examples"
+categories: ["prompt-engineering", "cost-control", "quality-assurance"]
+x_link: ""
+linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_are-you-struggling-to-balance-prompt-caching-activity-7328841977146347522-unMT?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
+---
+
 ## Effective AI Engineering #12: Balance Caching and Relevance with Clustered Few-Shot Examples
 
 **Are you struggling to balance prompt caching benefits with dynamic few-shot learning?** Dynamic in-context examples improve quality but reduce cache hits, forcing a tradeoff between performance and cost.

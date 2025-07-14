@@ -1,3 +1,11 @@
+---
+tip_number: 18
+tip_name: "Use Explicit Rejection Types for Better Error Handling"
+categories: ["output-validation", "error-handling", "user-experience"]
+x_link: ""
+linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_are-your-ai-responses-giving-wrong-answers-activity-7332828238190186496-glCr?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
+---
+
 ## Effective AI Engineering #18: Use Explicit Rejection Types for Better Error Handling
 
 **Are your AI responses giving wrong answers when they should say "I don't know"?** A confident but incorrect response is often worse than an honest rejection.

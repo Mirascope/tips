@@ -1,3 +1,11 @@
+---
+tip_number: 13
+tip_name: "Pure Pipelines - Stop Your AI System From Traumatizing Real Users During Testing"
+categories: ["testing", "architecture", "evaluation"]
+x_link: ""
+linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_youre-scared-to-test-your-ai-what-if-activity-7329204368811913218-P9gW?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
+---
+
 ## Effective AI Engineering #13: Pure Pipelines - Stop Your AI System From Traumatizing Real Users During Testing
 
 **Every evaluation run emails a real customer. Every test fires a live notification. Surprise!** When your AI pipeline mixes external data and side effects, testing becomes a high-stakes game of Russian roulette with user experience as the casualty.

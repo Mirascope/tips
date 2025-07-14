@@ -1,3 +1,11 @@
+---
+tip_number: 40
+tip_name: "Graph-Based Agent Workflows"
+categories: ["workflow", "architecture", "error-handling"]
+x_link: ""
+linkedin_link: ""
+---
+
 ## Effective AI Engineering #040: Graph-Based Agent Workflows
 
 **Are your agents making unpredictable decisions or getting stuck in loops?** Multi-step AI agents without structured workflows can spiral into unreliable behavior that breaks your application.

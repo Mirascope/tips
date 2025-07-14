@@ -1,3 +1,11 @@
+---
+tip_number: 38
+tip_name: "Attribute-First Data Generation"
+categories: ["prompt-engineering", "quality-assurance", "user-experience"]
+x_link: ""
+linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_effective-ai-engineering-38-attribute-first-activity-7349135712916598786-efTH?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
+---
+
 ## Effective AI Engineering #038: Attribute-First Data Generation
 
 **Is your synthetic data generation stuck in a loop of sameness?** LLMs love to generate similar outputs when asked to create data, making your synthetic datasets predictably boring.

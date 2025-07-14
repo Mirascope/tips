@@ -1,3 +1,11 @@
+---
+tip_number: 26
+tip_name: "Output Guardrails"
+categories: ["output-validation", "security", "quality-assurance"]
+x_link: ""
+linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_legal-is-definitely-going-to-be-upset-your-activity-7341525568221278210-Gkkv?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
+---
+
 ## Effective AI Engineering #26: Output Guardrails
 
 Legal is definitely going to be upset. Your chatbot just gave a customer a huge discount. One you never approved.

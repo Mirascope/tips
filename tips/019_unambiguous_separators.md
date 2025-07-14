@@ -1,3 +1,11 @@
+---
+tip_number: 19
+tip_name: "Use Unambiguous Separators in Your Prompts"
+categories: ["prompt-engineering", "security", "output-validation"]
+x_link: ""
+linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_your-model-is-ignoring-or-mixing-up-instructions-activity-7333190617092530176-5cIA?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
+---
+
 ## Effective AI Engineering #19: Use Unambiguous Separators in Your Prompts
 
 **Is your model suddenly ignoring instructions or mixing up data?** Ambiguous separators let user content "leak" into your prompt structure, causing models to treat data as instructions and produce completely unexpected outputs.

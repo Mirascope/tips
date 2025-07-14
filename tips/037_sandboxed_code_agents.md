@@ -1,3 +1,11 @@
+---
+tip_number: 37
+tip_name: "Sandboxed Code Agents"
+categories: ["security", "testing", "architecture"]
+x_link: ""
+linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_5-seconds-per-step-100-steps-this-agent-activity-7348773299218223105-rSpW?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
+---
+
 ## Effective AI Engineering #37: Sandboxed Code Agents
 
 **Why give your AI agent a single screwdriver when it could have an entire workshop?** Tool-calling agents are limited by the specific functions you've pre-defined, but a code agent can write custom logic to solve any problem.

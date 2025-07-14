@@ -1,3 +1,11 @@
+---
+tip_number: 17
+tip_name: "Quality Control Your RAG Chunks"
+categories: ["retrieval", "debugging", "quality-assurance"]
+x_link: ""
+linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_rag-built-answers-still-suck-now-what-activity-7331741067093934081-uqeI?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
+---
+
 ## Effective AI Engineering #17: Quality Control Your RAG Chunks
 
 RAG Built. Answers still suck. Now what?

@@ -1,3 +1,11 @@
+---
+tip_number: 25
+tip_name: "Ranking Boosting"
+categories: ["retrieval", "quality-assurance", "user-experience"]
+x_link: ""
+linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_customer-complaints-kept-piling-up-api-activity-7341163183103004672-5-HN?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
+---
+
 ## Effective AI Engineering #25: Ranking Boosting
 
 Your RAG gets documents like "API Documentation v1.2" before "Quick Start". Your ranker does not understand your data, but you can't train your own right now.

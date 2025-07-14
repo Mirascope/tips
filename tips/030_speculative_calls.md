@@ -1,3 +1,11 @@
+---
+tip_number: 30
+tip_name: "Speculative Calls"
+categories: ["performance", "user-experience", "cost-control"]
+x_link: ""
+linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_when-youre-too-slow-quality-doesnt-activity-7345511807144386561-mQZV?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
+---
+
 ## Effective AI Engineering #30: Speculative Calls
 
 Your fraud and abuse detection just got a whole lot better.

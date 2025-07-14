@@ -1,4 +1,12 @@
-## Effective AI Engineering Tip #21: Break Complex Tasks into Evaluable Components
+---
+tip_number: 21
+tip_name: "Break Complex Tasks into Evaluable Components"
+categories: ["workflow", "architecture", "prompt-engineering"]
+x_link: ""
+linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_youre-asking-the-ai-to-do-too-much-at-once-activity-7334277814331842561-2BiF?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
+---
+
+## Effective AI Engineering #21: Break Complex Tasks into Evaluable Components
 
 **Trying to solve everything in one LLM call?** Complex tasks with multiple requirements and varied success criteria often fail or produce inconsistent results when handled as monolithic prompts.
 

@@ -1,3 +1,11 @@
+---
+tip_number: 39
+tip_name: "Query Rewriting for RAG"
+categories: ["retrieval", "user-experience", "quality-assurance"]
+x_link: ""
+linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_effective-ai-engineering-39-query-rewriting-activity-7349498083807793152-M-oK?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
+---
+
 ## Effective AI Engineering #039: Query Rewriting for RAG
 
 **Why does your RAG system return docs about "database optimization" when users ask about "my app is slow"?** Embedding similarity search breaks down when user language doesn't match your documentation's technical vocabulary.

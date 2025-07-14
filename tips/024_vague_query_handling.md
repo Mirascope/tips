@@ -1,6 +1,14 @@
-# Effective AI Engineering 24: Handle Vague Queries
+---
+tip_number: 24
+tip_name: "Handle Vague Queries"
+categories: ["user-experience", "prompt-engineering", "quality-assurance"]
+x_link: ""
+linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_is-your-ai-spitting-out-nonsense-and-costing-activity-7340438380037455873-QAW4?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
+---
 
-## Is Your AI Burning Through Precious Compute Budget Answering Vague User Questions?
+## Effective AI Engineering #24: Handle Vague Queries
+
+**Is Your AI Burning Through Precious Compute Budget Answering Vague User Questions?**
 
 You built that new AI feature to revolutionize how users interact with your product. But when someone types "something is wrong," does your AI confidently spout generic advice, or worse, hallucinate details about problems it knows nothing about?
 

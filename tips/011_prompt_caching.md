@@ -1,3 +1,11 @@
+---
+tip_number: 11
+tip_name: "Optimize Costs with Prompt Caching"
+categories: ["cost-control", "performance", "prompt-engineering"]
+x_link: ""
+linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_input-tokens-are-expensive-so-why-are-activity-7328479589507252224-HyGy?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
+---
+
 ## Effective AI Engineering #11: Optimize Costs with Prompt Caching
 
 Input tokens are EXPENSIVE, so why are you paying for the same tokens again and again?

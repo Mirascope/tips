@@ -1,3 +1,11 @@
+---
+tip_number: 3
+tip_name: "Don't Just Log, Annotate! Turn Data into Understanding"
+categories: ["evaluation", "monitoring", "iteration"]
+x_link: ""
+linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_is-your-ai-system-generating-logs-without-activity-7324129427204812800-nDQz?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
+---
+
 ## Effective AI Engineering #3: Don't Just Log, Annotate! Turn Data into Understanding
 
 **Is your AI system generating logs without insights?** Traces and logs can quickly pile up without revealing why your AI fails or succeeds in specific scenarios.

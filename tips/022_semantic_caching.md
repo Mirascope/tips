@@ -1,3 +1,11 @@
+---
+tip_number: 22
+tip_name: "Semantic Caching"
+categories: ["cost-control", "performance", "user-experience"]
+x_link: ""
+linkedin_link: ""
+---
+
 ## Effective AI Engineering #22: Semantic Caching
 
 **Is Your AI Quietly Burning Through Your Budget?** Imagine getting your cloud bill, and you see huge charges because your AI answered "How do I reset my password?" a thousand different ways.

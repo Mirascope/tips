@@ -1,3 +1,11 @@
+---
+tip_number: 4
+tip_name: "Structure Your Outputs for Reliable Systems"
+categories: ["output-validation", "integration", "error-handling"]
+x_link: ""
+linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_are-your-llm-integrations-fragile-and-difficult-activity-7325216568555040768-jcs6?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
+---
+
 ## Effective AI Engineering: Structure Your Outputs for Reliable Systems
 
 **Are your LLM integrations fragile and difficult to maintain?** Raw text from LLMs becomes a maintenance nightmare when it needs to feed into other parts of your software.
