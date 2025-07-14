@@ -3,7 +3,7 @@ tip_number: 22
 tip_name: "Semantic Caching"
 categories: ["cost-control", "performance", "user-experience"]
 x_link: "https://x.com/skylar_b_payne/status/1933223068844896708"
-linkedin_link: ""
+linkedin_link: "https://www.linkedin.com/posts/skylarbpayne_effective-ai-engineering-22-semantic-caching-activity-7350643326733139968-MTrx?utm_source=share&utm_medium=member_desktop&rcm=ACoAABKpCf4BI_Yx2u7h66sgi5z1NF3aEYFHgps"
 ---
 
 ## Effective AI Engineering #22: Semantic Caching
